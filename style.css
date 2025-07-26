@@ -30,9 +30,9 @@
   --bg-disabled: #FFF2C9;
   --stroke-disabled: #FFFFFF;
 
-  /* Medidas */
-  --card-w: 750px;
-  --card-h: 1050px;
+  /* Medidas - Cards size to fit vertically on screen */
+  --card-w: min(400px, 90vw);
+  --card-h: min(600px, 80vh);
   --radius-card: 36px;
   --radius-block: 22px;
   --space-h: 40px;   /* lateral padding do card */
@@ -52,8 +52,8 @@
   --fw-regular: 400;
 
   /* Comparison View (smaller cards) */
-  --comparison-card-width: 375px;
-  --comparison-card-height: 525px;
+  --comparison-card-width: min(300px, 45vw);
+  --comparison-card-height: min(450px, 70vh);
   --comparison-title-size: 20px;
   --comparison-attr-size: 14px;
   --comparison-footer-size: 10px;
@@ -400,8 +400,8 @@ body {
 }
 
 .cards-comparison .card {
-    width: var(--card-w);
-    height: var(--card-h);
+    width: var(--comparison-card-width);
+    height: var(--comparison-card-height);
 }
 
 .cards-comparison .card .card-header {
@@ -597,13 +597,13 @@ body {
     }
     
     .card {
-        width: 300px;
-        height: 420px;
+        width: min(300px, 90vw);
+        height: min(420px, 75vh);
     }
     
     .cards-comparison .card {
-        width: 300px;
-        height: 420px;
+        width: min(280px, 85vw);
+        height: min(400px, 70vh);
     }
     
     .welcome-content, .game-over-content {
