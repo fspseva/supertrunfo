@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Super Trunfo - Carros</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Jockey+One&family=Inter:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="app">
+        <!-- Welcome Screen -->
+        <div id="welcome-screen" class="screen">
+            <div class="welcome-content">
+                <h1>Super Trunfo</h1>
+                <h2>Edição Carros</h2>
+                <div class="game-info">
+                    <p>Jogo para 2 jogadores na mesma tela</p>
+                    <p>Objetivo: Ficar com todas as cartas do baralho</p>
+                </div>
+                <button id="start-game" class="btn-primary">Iniciar Novo Jogo</button>
+            </div>
+        </div>
+
+        <!-- Rotate Prompt Screen -->
+        <div id="rotate-screen" class="screen hidden">
+            <div class="rotate-content">
+                <h1>Vire o tablet para o</h1>
+                <h2 id="current-player-name">Jogador 1</h2>
+                <p>Você irá escolher o atributo desta rodada</p>
+                <button id="continue-btn" class="btn-primary">Continuar</button>
+            </div>
+        </div>
+
+        <!-- Game Screen -->
+        <div id="game-screen" class="screen hidden">
+            <div class="game-header">
+                <div class="player-info">
+                    <span id="player-a-cards">Jogador 1: 0 cartas</span>
+                    <span id="pot-info">Pot: 0 cartas</span>
+                    <span id="player-b-cards">Jogador 2: 0 cartas</span>
+                </div>
+                <div class="turn-info">
+                    <span id="turn-indicator">Turno: Jogador 1</span>
+                </div>
+            </div>
+
+            <div class="game-content">
+                <!-- Card Selection Phase -->
+                <div id="card-selection" class="phase-content">
+                    <div class="card-container">
+                        <div class="card" id="current-card">
+                            <div class="card-header">
+                                <h3 id="card-name">Nome do Carro</h3>
+                            </div>
+                            <div class="card-image">
+                                <img id="card-img" src="" alt="Carro">
+                            </div>
+                            <div class="card-attributes">
+                                <div class="attribute-row" data-attr="maxSpeed">
+                                    <span class="attr-name">Velocidade Máxima</span>
+                                    <span class="attr-value"></span>
+                                </div>
+                                <div class="attribute-row" data-attr="power">
+                                    <span class="attr-name">Potência</span>
+                                    <span class="attr-value"></span>
+                                </div>
+                                <div class="attribute-row" data-attr="acceleration">
+                                    <span class="attr-name">0-100 km/h</span>
+                                    <span class="attr-value"></span>
+                                </div>
+                                <div class="attribute-row" data-attr="displacement">
+                                    <span class="attr-name">Cilindrada</span>
+                                    <span class="attr-value"></span>
+                                </div>
+                                <div class="attribute-row" data-attr="weight">
+                                    <span class="attr-name">Peso</span>
+                                    <span class="attr-value"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="instructions">
+                        <p>Escolha um atributo para competir:</p>
+                    </div>
+                </div>
+
+                <!-- Card Reveal Phase -->
+                <div id="card-reveal" class="phase-content hidden">
+                    <div class="cards-comparison">
+                        <div class="card player-a-card">
+                            <div class="card-header">
+                                <h4>Jogador 1</h4>
+                                <h3 id="card-a-name">Nome do Carro</h3>
+                            </div>
+                            <div class="card-image">
+                                <img id="card-a-img" src="" alt="Carro A">
+                            </div>
+                            <div class="card-attributes">
+                                <div class="attribute-row" id="attr-a-maxSpeed">
+                                    <span class="attr-name">Velocidade Máxima</span>
+                                    <span class="attr-value"></span>
+                                </div>
+                                <div class="attribute-row" id="attr-a-power">
+                                    <span class="attr-name">Potência</span>
+                                    <span class="attr-value"></span>
+                                </div>
+                                <div class="attribute-row" id="attr-a-acceleration">
+                                    <span class="attr-name">0-100 km/h</span>
+                                    <span class="attr-value"></span>
+                                </div>
+                                <div class="attribute-row" id="attr-a-displacement">
+                                    <span class="attr-name">Cilindrada</span>
+                                    <span class="attr-value"></span>
+                                </div>
+                                <div class="attribute-row" id="attr-a-weight">
+                                    <span class="attr-name">Peso</span>
+                                    <span class="attr-value"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="vs-section">
+                            <div class="vs-text">VS</div>
+                            <div class="result-text" id="result-text"></div>
+                        </div>
+
+                        <div class="card player-b-card">
+                            <div class="card-header">
+                                <h4>Jogador 2</h4>
+                                <h3 id="card-b-name">Nome do Carro</h3>
+                            </div>
+                            <div class="card-image">
+                                <img id="card-b-img" src="" alt="Carro B">
+                            </div>
+                            <div class="card-attributes">
+                                <div class="attribute-row" id="attr-b-maxSpeed">
+                                    <span class="attr-name">Velocidade Máxima</span>
+                                    <span class="attr-value"></span>
+                                </div>
+                                <div class="attribute-row" id="attr-b-power">
+                                    <span class="attr-name">Potência</span>
+                                    <span class="attr-value"></span>
+                                </div>
+                                <div class="attribute-row" id="attr-b-acceleration">
+                                    <span class="attr-name">0-100 km/h</span>
+                                    <span class="attr-value"></span>
+                                </div>
+                                <div class="attribute-row" id="attr-b-displacement">
+                                    <span class="attr-name">Cilindrada</span>
+                                    <span class="attr-value"></span>
+                                </div>
+                                <div class="attribute-row" id="attr-b-weight">
+                                    <span class="attr-name">Peso</span>
+                                    <span class="attr-value"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="result-actions">
+                        <button id="next-round-btn" class="btn-primary">Próxima Rodada</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Game Over Screen -->
+        <div id="game-over-screen" class="screen hidden">
+            <div class="game-over-content">
+                <h1>Fim de Jogo!</h1>
+                <h2 id="winner-text">Jogador X Venceu!</h2>
+                <div class="final-stats">
+                    <p id="final-stats-text">Estatísticas finais</p>
+                </div>
+                <button id="new-game-btn" class="btn-primary">Novo Jogo</button>
+            </div>
+        </div>
+
+        <!-- Loading overlay -->
+        <div id="loading" class="loading hidden">
+            <div class="loading-spinner"></div>
+            <p>Carregando...</p>
+        </div>
+    </div>
+
+    <script src="game.js"></script>
+</body>
+</html>
