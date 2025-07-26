@@ -40,36 +40,37 @@
   --stroke-disabled: #cbd5e0;
   --text-disabled: #a0aec0;
 
-  /* Critical sizing fixes - Cards MUST fit vertically */
-  --header-height: 100px; /* Account for game header */
-  --ui-spacing: 60px; /* Additional UI elements and padding */
+  /* FIXED CARD DIMENSIONS - NEVER CHANGE THESE */
+  --card-base-width: 400px;
+  --card-base-height: 600px;
+  --card-aspect-ratio: calc(var(--card-base-width) / var(--card-base-height));
+  
+  /* Available space calculations */
+  --header-height: 100px;
+  --ui-spacing: 80px; /* Instructions + padding */
   --available-height: calc(100vh - var(--header-height) - var(--ui-spacing));
+  --available-width: 100vw;
   
-  /* Single card view - fits perfectly with room for instructions */
-  --card-w: min(380px, 88vw);
-  --card-h: min(550px, var(--available-height));
+  /* Single card scaling - uniform scale to fit viewport */
+  --single-scale-by-height: calc(var(--available-height) / var(--card-base-height));
+  --single-scale-by-width: calc((100vw - 40px) / var(--card-base-width));
+  --single-card-scale: min(var(--single-scale-by-height), var(--single-scale-by-width), 1);
   
-  /* Comparison view - two cards side by side, accounting for header */
-  --comparison-available-height: calc(100vh - var(--header-height) - 40px);
-  --comparison-card-width: min(320px, 42vw);
-  --comparison-card-height: min(460px, var(--comparison-available-height));
+  /* Comparison view scaling - two cards side by side */
+  --comparison-available-width: calc((100vw - 120px) / 2); /* Space for gap and padding */
+  --comparison-available-height: calc(100vh - var(--header-height) - 120px);
+  --comparison-scale-by-width: calc(var(--comparison-available-width) / var(--card-base-width));
+  --comparison-scale-by-height: calc(var(--comparison-available-height) / var(--card-base-height));
+  --comparison-card-scale: min(var(--comparison-scale-by-width), var(--comparison-scale-by-height), 0.8);
   
   /* Card styling */
   --radius-card: 24px;
   --radius-block: 16px;
-  --space-h: clamp(20px, 4vw, 35px);
-  --space-v: clamp(20px, 4vh, 35px);
-  --attr-gap: clamp(8px, 2vh, 14px);
-  --attr-pad-y: clamp(12px, 2.5vh, 16px);
-  --attr-pad-x: clamp(16px, 4vw, 24px);
   
-  /* Responsive typography */
+  /* Typography */
   --font-title: 'Jockey One', sans-serif;
   --font-body: 'Jockey One', sans-serif;
   --font-footer: 'Inter', sans-serif;
-  --fz-title: clamp(24px, 5vw, 42px);
-  --fz-attr: clamp(16px, 3.5vw, 28px);
-  --fz-footer: clamp(12px, 2.5vw, 18px);
   --fw-heavy: 900;
   --fw-regular: 400;
   
@@ -296,8 +297,14 @@ body {
 }
 
 .card {
-  width: var(--card-w);
-  height: var(--card-h);
+  /* FIXED DIMENSIONS - NEVER CHANGE */
+  width: var(--card-base-width);
+  height: var(--card-base-height);
+  
+  /* Responsive scaling applied via transform */
+  transform: scale(var(--single-card-scale));
+  transform-origin: center center;
+  
   position: relative;
   background: var(--grad-card);
   border-radius: var(--radius-card);
@@ -309,25 +316,35 @@ body {
 }
 
 .card:hover {
-  transform: translateY(-8px) scale(1.02);
+  transform: translateY(-8px) scale(calc(var(--single-card-scale) * 1.02));
   box-shadow: var(--shadow-hover);
   border-color: rgba(255, 255, 255, 0.2);
 }
 
 .card:active {
-  transform: translateY(-4px) scale(1.01);
+  transform: translateY(-4px) scale(calc(var(--single-card-scale) * 1.01));
   transition: var(--transition-quick);
 }
 
+/* Comparison cards hover effects */
+.cards-comparison .card:hover {
+  transform: translateY(-8px) scale(calc(var(--comparison-card-scale) * 1.02));
+}
+
+.cards-comparison .card:active {
+  transform: translateY(-4px) scale(calc(var(--comparison-card-scale) * 1.01));
+}
+
 /* ===========================
-   HEADER
+   HEADER - FIXED POSITIONING
 =========================== */
 .card-header {
   position: absolute;
-  left: var(--space-h);
-  top: var(--space-v);
-  width: calc(100% - (var(--space-h) * 2));
-  padding: clamp(12px, 3vh, 20px) clamp(16px, 4vw, 24px);
+  left: 25px;
+  top: 25px;
+  width: 350px;
+  height: 80px;
+  padding: 16px 20px;
   background: var(--grad-title);
   border-radius: var(--radius-block);
   display: flex;
@@ -341,7 +358,7 @@ body {
 .card-header h3 {
   margin: 0;
   color: var(--text-light);
-  font-size: var(--fz-title);
+  font-size: 28px;
   font-family: var(--font-title);
   font-weight: var(--fw-heavy);
   text-align: center;
@@ -353,7 +370,7 @@ body {
 .card-header h4 {
   margin: 0 0 8px 0;
   color: var(--text-light);
-  font-size: clamp(12px, 2.5vw, 16px);
+  font-size: 14px;
   font-family: var(--font-body);
   font-weight: var(--fw-regular);
   opacity: 0.9;
@@ -362,14 +379,14 @@ body {
 }
 
 /* ===========================
-   IMAGE
+   IMAGE - FIXED POSITIONING
 =========================== */
 .card-image {
   position: absolute;
-  left: var(--space-h);
-  top: clamp(100px, 18vh, 140px);
-  width: calc(100% - (var(--space-h) * 2));
-  height: clamp(200px, 35vh, 280px);
+  left: 25px;
+  top: 125px;
+  width: 350px;
+  height: 200px;
   border-radius: var(--radius-block);
   overflow: hidden;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
@@ -388,14 +405,14 @@ body {
 }
 
 /* ===========================
-   ATTRIBUTES
+   ATTRIBUTES - FIXED POSITIONING
 =========================== */
 .card-attributes {
   position: absolute;
-  left: var(--space-h);
-  top: clamp(320px, 58vh, 440px);
-  width: calc(100% - (var(--space-h) * 2));
-  bottom: clamp(60px, 12vh, 80px);
+  left: 25px;
+  top: 345px;
+  width: 350px;
+  height: 190px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -403,8 +420,9 @@ body {
 
 .attribute-row {
   width: 100%;
-  padding: var(--attr-pad-y) var(--attr-pad-x);
-  margin-bottom: var(--attr-gap);
+  height: 32px;
+  padding: 12px 18px;
+  margin-bottom: 6px;
   background: var(--grad-attr-default);
   border-radius: var(--radius-block);
   display: flex;
@@ -481,10 +499,10 @@ body {
   50% { box-shadow: 0 8px 25px rgba(72, 187, 120, 0.5); }
 }
 
-/* ATTRIBUTE TEXT */
+/* ATTRIBUTE TEXT - FIXED SIZING */
 .attr-name,
 .attr-value {
-  font-size: var(--fz-attr);
+  font-size: 18px;
   font-family: var(--font-body);
   font-weight: var(--fw-heavy);
   line-height: 1.2;
@@ -517,16 +535,16 @@ body {
 }
 
 /* ===========================
-   FOOTER
+   FOOTER - FIXED POSITIONING
 =========================== */
 .card::after {
   content: "Super Trunfo Online";
   position: absolute;
-  bottom: clamp(15px, 3vh, 25px);
+  bottom: 20px;
   left: 50%;
   transform: translateX(-50%);
   color: rgba(255, 255, 255, 0.7);
-  font-size: var(--fz-footer);
+  font-size: 14px;
   font-family: var(--font-footer);
   font-style: italic;
   font-weight: var(--fw-regular);
@@ -575,58 +593,14 @@ body {
 }
 
 .cards-comparison .card {
-    width: var(--comparison-card-width);
-    height: var(--comparison-card-height);
-    /* Ensure cards fit in comparison view */
-    max-height: calc(100vh - 200px);
+    /* Use base dimensions with comparison scaling */
+    width: var(--card-base-width);
+    height: var(--card-base-height);
+    transform: scale(var(--comparison-card-scale));
+    transform-origin: center center;
 }
 
-.cards-comparison .card .card-header {
-    width: calc(100% - (var(--space-h) * 2));
-    padding: clamp(8px, 2vh, 16px) clamp(12px, 3vw, 20px);
-    left: var(--space-h);
-    top: var(--space-v);
-    border-radius: var(--radius-block);
-}
-
-.cards-comparison .card .card-header h3 {
-    font-size: clamp(18px, 4vw, 32px);
-}
-
-.cards-comparison .card .card-header h4 {
-    font-size: clamp(10px, 2vw, 14px);
-}
-
-.cards-comparison .card .card-image {
-    width: calc(100% - (var(--space-h) * 2));
-    height: clamp(140px, 25vh, 200px);
-    left: var(--space-h);
-    top: clamp(70px, 15vh, 110px);
-    border-radius: var(--radius-block);
-}
-
-.cards-comparison .card .card-attributes {
-    left: var(--space-h);
-    top: clamp(230px, 45vh, 330px);
-    width: calc(100% - (var(--space-h) * 2));
-    bottom: clamp(40px, 8vh, 60px);
-}
-
-.cards-comparison .card .attribute-row {
-    padding: clamp(8px, 1.5vh, 12px) clamp(12px, 2.5vw, 18px);
-    margin-bottom: clamp(4px, 1vh, 8px);
-    border-radius: var(--radius-block);
-}
-
-.cards-comparison .card .attr-name,
-.cards-comparison .card .attr-value {
-    font-size: clamp(12px, 2.5vw, 20px);
-}
-
-.cards-comparison .card::after {
-    bottom: clamp(10px, 2vh, 20px);
-    font-size: clamp(8px, 1.5vw, 14px);
-}
+/* Comparison cards inherit all fixed positioning from base .card styles */
 
 .vs-section {
     text-align: center;
@@ -771,35 +745,44 @@ body {
     100% { transform: rotate(360deg); }
 }
 
-/* Responsive Design */
+/* Responsive Design - Scaling Adjustments Only */
 @media (max-width: 1200px) {
-    .cards-comparison {
-        gap: clamp(15px, 4vw, 30px);
+    :root {
+        /* Adjust scaling for medium screens */
+        --comparison-available-width: calc((100vw - 100px) / 2);
+        --comparison-scale-by-width: calc(var(--comparison-available-width) / var(--card-base-width));
+        --comparison-card-scale: min(var(--comparison-scale-by-width), var(--comparison-scale-by-height), 0.75);
     }
     
-    :root {
-        --comparison-card-width: min(280px, 44vw);
+    .cards-comparison {
+        gap: 30px;
     }
 }
 
 @media (max-width: 768px) {
     :root {
-        /* Mobile-optimized sizing */
-        --card-w: min(340px, 92vw);
-        --card-h: calc(100vh - 160px); /* Account for header + instructions */
-        --comparison-card-width: min(300px, 90vw);
-        --comparison-card-height: calc(100vh - 180px);
+        /* Mobile scaling adjustments */
+        --ui-spacing: 100px;
+        --single-scale-by-height: calc(var(--available-height) / var(--card-base-height));
+        --single-scale-by-width: calc((100vw - 20px) / var(--card-base-width));
+        --single-card-scale: min(var(--single-scale-by-height), var(--single-scale-by-width), 0.9);
+        
+        --comparison-available-height: calc(100vh - var(--header-height) - 140px);
+        --comparison-available-width: calc(100vw - 40px);
+        --comparison-scale-by-width: calc(var(--comparison-available-width) / var(--card-base-width));
+        --comparison-scale-by-height: calc(var(--comparison-available-height) / var(--card-base-height));
+        --comparison-card-scale: min(var(--comparison-scale-by-width), var(--comparison-scale-by-height), 0.8);
     }
     
     .cards-comparison {
         flex-direction: column;
-        gap: clamp(15px, 4vh, 25px);
+        gap: 25px;
         align-items: center;
     }
     
     .vs-section {
         order: 2;
-        margin: clamp(10px, 3vh, 20px) 0;
+        margin: 20px 0;
     }
     
     .card-with-label:first-child {
@@ -811,7 +794,7 @@ body {
     }
     
     .welcome-content, .game-over-content {
-        padding: clamp(30px, 6vh, 50px) clamp(20px, 5vw, 40px);
+        padding: 40px 30px;
         margin: 0 10px;
     }
     
@@ -822,19 +805,20 @@ body {
     }
     
     .game-content {
-        padding: clamp(20px, 4vh, 30px) clamp(10px, 3vw, 20px);
+        padding: 25px 15px;
     }
 }
 
 @media (max-width: 480px) {
     :root {
-        /* Extra small mobile optimization */
-        --card-w: min(300px, 95vw);
-        --card-h: calc(100vh - 140px);
-        --comparison-card-width: min(280px, 95vw);
-        --comparison-card-height: calc(100vh - 160px);
-        --space-h: 15px;
-        --space-v: 15px;
+        /* Extra small mobile scaling */
+        --ui-spacing: 80px;
+        --single-scale-by-width: calc((100vw - 10px) / var(--card-base-width));
+        --single-card-scale: min(var(--single-scale-by-height), var(--single-scale-by-width), 0.8);
+        
+        --comparison-available-width: calc(100vw - 20px);
+        --comparison-scale-by-width: calc(var(--comparison-available-width) / var(--card-base-width));
+        --comparison-card-scale: min(var(--comparison-scale-by-width), var(--comparison-scale-by-height), 0.7);
     }
     
     .screen {
@@ -848,14 +832,19 @@ body {
 
 @media (orientation: landscape) and (max-height: 600px) {
     :root {
-        /* Landscape mobile optimization */
-        --card-h: calc(100vh - 120px);
-        --comparison-card-height: calc(100vh - 140px);
+        /* Landscape scaling adjustments */
+        --available-height: calc(100vh - var(--header-height) - 60px);
+        --single-scale-by-height: calc(var(--available-height) / var(--card-base-height));
+        --single-card-scale: min(var(--single-scale-by-height), var(--single-scale-by-width), 0.85);
+        
+        --comparison-available-height: calc(100vh - var(--header-height) - 80px);
+        --comparison-scale-by-height: calc(var(--comparison-available-height) / var(--card-base-height));
+        --comparison-card-scale: min(var(--comparison-scale-by-width), var(--comparison-scale-by-height), 0.7);
     }
     
     .cards-comparison {
         flex-direction: row;
-        gap: clamp(10px, 3vw, 20px);
+        gap: 20px;
     }
     
     .vs-section {
