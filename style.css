@@ -152,7 +152,7 @@ body {
     max-width: 1200px;
 }
 
-/* Card Styles */
+/* Card Styles - New Design */
 .card-container {
     display: flex;
     justify-content: center;
@@ -160,38 +160,55 @@ body {
 }
 
 .card {
-    background: white;
+    width: 375px;
+    height: 525px;
+    position: relative;
+    background: #0D0D0D;
     border-radius: 15px;
-    overflow: hidden;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-    width: 300px;
     transition: transform 0.3s ease;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
 }
 
 .card:hover {
-    transform: translateY(-5px);
+    transform: translateY(-5px) scale(1.02);
 }
 
 .card-header {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    padding: 15px;
-    text-align: center;
+    width: calc(100% - 40px);
+    padding: 10px 15px;
+    position: absolute;
+    left: 20px;
+    top: 20px;
+    background: linear-gradient(90deg, #FAF7A5 0%, #EAA26B 100%);
+    border-radius: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .card-header h3, .card-header h4 {
     margin: 0;
-    font-size: 1.1rem;
+    color: black;
+    font-size: 24px;
+    font-family: 'Jockey One', sans-serif;
+    font-weight: 400;
+    text-align: center;
+    word-wrap: break-word;
 }
 
 .card-header h4 {
-    font-size: 0.9rem;
-    opacity: 0.9;
+    font-size: 18px;
     margin-bottom: 5px;
+    font-family: 'Inter', sans-serif;
 }
 
 .card-image {
-    height: 200px;
+    width: calc(100% - 40px);
+    height: 220px;
+    position: absolute;
+    left: 20px;
+    top: 80px;
+    border-radius: 10px;
     overflow: hidden;
 }
 
@@ -202,62 +219,83 @@ body {
 }
 
 .card-attributes {
-    padding: 20px;
+    position: absolute;
+    left: 20px;
+    top: 320px;
+    width: calc(100% - 40px);
 }
 
 .attribute-row {
+    width: 100%;
+    padding: 8px 15px;
+    margin-bottom: 8px;
+    background: linear-gradient(90deg, #FAF7A5 0%, #EAA26B 100%);
+    border-radius: 10px;
     display: flex;
     justify-content: space-between;
-    padding: 8px 0;
-    border-bottom: 1px solid #eee;
+    align-items: center;
     cursor: pointer;
     transition: all 0.3s ease;
-    border-radius: 5px;
-    margin: 2px 0;
-    padding: 12px 10px;
+    position: relative;
 }
 
 .attribute-row:hover {
-    background: #f8f9ff;
+    background: #FAF7A5;
     transform: translateX(5px);
+    outline: 2px solid white;
+    outline-offset: -2px;
 }
 
 .attribute-row:last-child {
-    border-bottom: none;
+    margin-bottom: 0;
 }
 
 .attribute-row.selected {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    font-weight: bold;
+    background: #FAF7A5;
+    outline: 4px solid white;
+    outline-offset: -4px;
 }
 
 .attribute-row.winner {
-    background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
-    color: white;
-    font-weight: bold;
-    box-shadow: 0 5px 15px rgba(76, 175, 80, 0.3);
+    background: #95FF72;
+    outline: 4px solid #789922;
+    outline-offset: -4px;
 }
 
 .attribute-row.loser {
-    background: linear-gradient(135deg, #f44336 0%, #d32f2f 100%);
-    color: white;
-    opacity: 0.8;
+    background: #FF7E72;
+    outline: 4px solid #9D110D;
+    outline-offset: -4px;
 }
 
 .attr-name {
-    font-weight: 600;
+    color: black;
+    font-size: 16px;
+    font-family: 'Jockey One', sans-serif;
+    font-weight: 400;
 }
 
 .attr-value {
-    font-weight: bold;
-    color: #667eea;
+    text-align: right;
+    color: black;
+    font-size: 16px;
+    font-family: 'Jockey One', sans-serif;
+    font-weight: 400;
 }
 
-.attribute-row.selected .attr-value,
-.attribute-row.winner .attr-value,
-.attribute-row.loser .attr-value {
-    color: white;
+/* Card Footer */
+.card::after {
+    content: "Super Trunfo Online";
+    position: absolute;
+    bottom: 15px;
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+    color: #FAF7A5;
+    font-size: 12px;
+    font-family: 'Inter', sans-serif;
+    font-style: italic;
+    font-weight: 400;
 }
 
 /* Card Comparison */
@@ -266,7 +304,20 @@ body {
     justify-content: space-around;
     align-items: center;
     margin-bottom: 30px;
-    gap: 30px;
+    gap: 20px;
+}
+
+.cards-comparison .card {
+    width: 320px;
+    height: 450px;
+}
+
+.cards-comparison .card-attributes {
+    top: 280px;
+}
+
+.cards-comparison .card-image {
+    height: 180px;
 }
 
 .vs-section {
