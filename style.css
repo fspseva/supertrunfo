@@ -160,11 +160,11 @@ body {
 }
 
 .card {
-    width: 375px;
-    height: 525px;
+    width: 750px;
+    height: 1050px;
     position: relative;
     background: #0D0D0D;
-    border-radius: 15px;
+    border-radius: 30px;
     transition: transform 0.3s ease;
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
 }
@@ -174,41 +174,35 @@ body {
 }
 
 .card-header {
-    width: calc(100% - 40px);
-    padding: 10px 15px;
+    width: calc(100% - 80px);
+    padding: 20px 30px;
     position: absolute;
-    left: 20px;
-    top: 20px;
+    left: 40px;
+    top: 40px;
     background: linear-gradient(90deg, #FAF7A5 0%, #EAA26B 100%);
-    border-radius: 10px;
+    border-radius: 20px;
     display: flex;
     justify-content: center;
     align-items: center;
 }
 
-.card-header h3, .card-header h4 {
+.card-header h3 {
     margin: 0;
     color: black;
-    font-size: 24px;
+    font-size: 48px;
     font-family: 'Jockey One', sans-serif;
     font-weight: 400;
     text-align: center;
     word-wrap: break-word;
 }
 
-.card-header h4 {
-    font-size: 18px;
-    margin-bottom: 5px;
-    font-family: 'Inter', sans-serif;
-}
-
 .card-image {
-    width: calc(100% - 40px);
-    height: 220px;
+    width: calc(100% - 80px);
+    height: 440px;
     position: absolute;
-    left: 20px;
-    top: 80px;
-    border-radius: 10px;
+    left: 40px;
+    top: 160px;
+    border-radius: 20px;
     overflow: hidden;
 }
 
@@ -220,17 +214,17 @@ body {
 
 .card-attributes {
     position: absolute;
-    left: 20px;
-    top: 320px;
-    width: calc(100% - 40px);
+    left: 40px;
+    top: 640px;
+    width: calc(100% - 80px);
 }
 
 .attribute-row {
     width: 100%;
-    padding: 8px 15px;
-    margin-bottom: 8px;
+    padding: 16px 30px;
+    margin-bottom: 16px;
     background: linear-gradient(90deg, #FAF7A5 0%, #EAA26B 100%);
-    border-radius: 10px;
+    border-radius: 20px;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -270,7 +264,7 @@ body {
 
 .attr-name {
     color: black;
-    font-size: 16px;
+    font-size: 32px;
     font-family: 'Jockey One', sans-serif;
     font-weight: 400;
 }
@@ -278,7 +272,7 @@ body {
 .attr-value {
     text-align: right;
     color: black;
-    font-size: 16px;
+    font-size: 32px;
     font-family: 'Jockey One', sans-serif;
     font-weight: 400;
 }
@@ -287,15 +281,26 @@ body {
 .card::after {
     content: "Super Trunfo Online";
     position: absolute;
-    bottom: 15px;
+    bottom: 30px;
     left: 50%;
     transform: translateX(-50%);
     text-align: center;
     color: #FAF7A5;
-    font-size: 12px;
+    font-size: 24px;
     font-family: 'Inter', sans-serif;
     font-style: italic;
     font-weight: 400;
+}
+
+/* Player labels above cards */
+.player-label {
+    text-align: center;
+    margin-bottom: 15px;
+    color: white;
+    font-size: 24px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
 }
 
 /* Card Comparison */
@@ -307,17 +312,57 @@ body {
     gap: 20px;
 }
 
+.card-with-label {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
 .cards-comparison .card {
-    width: 320px;
-    height: 450px;
+    width: 375px;
+    height: 525px;
 }
 
-.cards-comparison .card-attributes {
-    top: 280px;
+.cards-comparison .card .card-header {
+    width: calc(100% - 40px);
+    padding: 10px 15px;
+    left: 20px;
+    top: 20px;
+    border-radius: 10px;
 }
 
-.cards-comparison .card-image {
+.cards-comparison .card .card-header h3 {
+    font-size: 20px;
+}
+
+.cards-comparison .card .card-image {
+    width: calc(100% - 40px);
     height: 180px;
+    left: 20px;
+    top: 80px;
+    border-radius: 10px;
+}
+
+.cards-comparison .card .card-attributes {
+    left: 20px;
+    top: 280px;
+    width: calc(100% - 40px);
+}
+
+.cards-comparison .card .attribute-row {
+    padding: 6px 12px;
+    margin-bottom: 6px;
+    border-radius: 8px;
+}
+
+.cards-comparison .card .attr-name,
+.cards-comparison .card .attr-value {
+    font-size: 14px;
+}
+
+.cards-comparison .card::after {
+    bottom: 10px;
+    font-size: 10px;
 }
 
 .vs-section {
