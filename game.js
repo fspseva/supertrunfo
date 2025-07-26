@@ -31,9 +31,16 @@ class SuperTrunfoGameStatic {
     createNewGame() {
         const shuffledCards = this.shuffleArray(this.carsData.cards.map(card => card.id));
         
-        const midPoint = Math.ceil(shuffledCards.length / 2);
-        const playerADeck = shuffledCards.slice(0, midPoint);
-        const playerBDeck = shuffledCards.slice(midPoint);
+        // Remove one random card if total is odd to ensure equal distribution
+        let gameCards = shuffledCards;
+        if (shuffledCards.length % 2 === 1) {
+            gameCards = shuffledCards.slice(0, -1); // Remove last card after shuffle
+        }
+        
+        // Split equally between players
+        const midPoint = gameCards.length / 2;
+        const playerADeck = gameCards.slice(0, midPoint);
+        const playerBDeck = gameCards.slice(midPoint);
         
         return {
             id: Date.now().toString(),
@@ -45,7 +52,8 @@ class SuperTrunfoGameStatic {
             phase: 'SETUP',
             pot: [],
             lastRound: null,
-            history: []
+            history: [],
+            excludedCard: shuffledCards.length % 2 === 1 ? shuffledCards[shuffledCards.length - 1] : null
         };
     }
 
@@ -158,7 +166,14 @@ class SuperTrunfoGameStatic {
         
         this.playerACards.textContent = `${playerA.name}: ${playerA.deck.length} cartas`;
         this.playerBCards.textContent = `${playerB.name}: ${playerB.deck.length} cartas`;
-        this.potInfo.textContent = `Pot: ${this.gameState.pot.length} cartas`;
+        
+        // Show pot and excluded card info
+        let potText = `Pot: ${this.gameState.pot.length} cartas`;
+        if (this.gameState.excludedCard) {
+            const excludedCardData = this.getCardById(this.gameState.excludedCard);
+            potText += ` | Excluída: ${excludedCardData?.name || 'Carta'}`;
+        }
+        this.potInfo.textContent = potText;
         
         const currentPlayerName = this.gameState.players[this.gameState.turnPlayerId].name;
         this.turnIndicator.textContent = `Turno: ${currentPlayerName}`;

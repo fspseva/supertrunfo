@@ -27,10 +27,16 @@ function shuffleArray(array) {
 function createNewGame() {
     const shuffledCards = shuffleArray(carsData.cards.map(card => card.id));
     
-    // Distribute cards equally (if odd number, player A gets the extra)
-    const midPoint = Math.ceil(shuffledCards.length / 2);
-    const playerADeck = shuffledCards.slice(0, midPoint);
-    const playerBDeck = shuffledCards.slice(midPoint);
+    // Remove one random card if total is odd to ensure equal distribution
+    let gameCards = shuffledCards;
+    if (shuffledCards.length % 2 === 1) {
+        gameCards = shuffledCards.slice(0, -1); // Remove last card after shuffle
+    }
+    
+    // Split equally between players
+    const midPoint = gameCards.length / 2;
+    const playerADeck = gameCards.slice(0, midPoint);
+    const playerBDeck = gameCards.slice(midPoint);
     
     return {
         id: Date.now().toString(),
@@ -42,7 +48,8 @@ function createNewGame() {
         phase: 'SETUP',
         pot: [],
         lastRound: null,
-        history: []
+        history: [],
+        excludedCard: shuffledCards.length % 2 === 1 ? shuffledCards[shuffledCards.length - 1] : null
     };
 }
 
