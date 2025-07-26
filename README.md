@@ -2,6 +2,8 @@
 
 This is the static version of the Super Trunfo card game that runs entirely in the browser without requiring a server.
 
+## 🎮 [Play Online](https://fspseva.github.io/supertrunfo/)
+
 ## How to Play
 
 1. **Open the game**: Double-click on `index.html` or drag it to your browser
@@ -14,7 +16,6 @@ This is the static version of the Super Trunfo card game that runs entirely in t
 - `index-static.html` - Alternative game file
 - `style.css` - Game styling (includes the updated card sizes)
 - `game.js` - Main game logic
-- `game-static.js` - Alternative game logic
 - `cars.json` - Car data
 - `carros_imgs/` - Car images folder
 
