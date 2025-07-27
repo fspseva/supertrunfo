@@ -307,32 +307,25 @@ class SuperTrunfoGameStatic {
         card.addEventListener('touchend', handleTouchEnd, { passive: true });
     }
 
-    triggerCardDrawAnimation(cardElement, type = 'single') {
+    triggerCardFlipAnimation(cardElement) {
         if (!cardElement) return;
         
         // Reset any existing animations
-        cardElement.classList.remove('card-draw-animation-single', 'card-draw-animation-comparison', 'card-draw-complete');
+        cardElement.classList.remove('card-flip-animation', 'card-flip-complete');
         
-        // Set initial state
-        cardElement.classList.add('card-draw-enter');
-        
-        // Force reflow to ensure initial state is applied
+        // Force reflow to ensure clean state
         cardElement.offsetHeight;
         
-        // Remove initial state and trigger animation
-        cardElement.classList.remove('card-draw-enter');
-        
-        if (type === 'single') {
-            cardElement.classList.add('card-draw-animation-single');
-        } else if (type === 'comparison') {
-            cardElement.classList.add('card-draw-animation-comparison');
-        }
+        // Add flip animation class (only for turn start)
+        cardElement.classList.add('card-flip-animation');
+        cardElement.style.pointerEvents = 'none';
         
         // Clean up animation classes after animation completes
         setTimeout(() => {
-            cardElement.classList.remove('card-draw-animation-single', 'card-draw-animation-comparison');
-            cardElement.classList.add('card-draw-complete');
-        }, type === 'single' ? 1500 : 1300);
+            cardElement.classList.remove('card-flip-animation');
+            cardElement.classList.add('card-flip-complete');
+            cardElement.style.pointerEvents = '';
+        }, 1200); // 1.2s animation duration
     }
 
     showLoading() {
@@ -423,9 +416,9 @@ class SuperTrunfoGameStatic {
             this.showScreen('game');
             this.hideLoading();
             
-            // Trigger card draw animation after a brief delay to ensure card is displayed
+            // Trigger card flip animation after a brief delay to ensure card is displayed
             setTimeout(() => {
-                this.triggerCardDrawAnimation(this.currentCard, 'single');
+                this.triggerCardFlipAnimation(this.currentCard);
             }, 100);
         }, 500);
     }
@@ -526,22 +519,12 @@ class SuperTrunfoGameStatic {
         // Get comparison cards reference
         const comparisonCards = document.querySelectorAll('.cards-comparison .card');
         
-        // Trigger card draw animation for comparison cards
-        setTimeout(() => {
-            comparisonCards.forEach((card, index) => {
-                // Stagger the animations slightly for a more dynamic effect
-                setTimeout(() => {
-                    this.triggerCardDrawAnimation(card, 'comparison');
-                }, index * 200);
-            });
-        }, 100);
-        
-        // Reinitialize 3D effects for comparison cards after animation
+        // Reinitialize 3D effects for comparison cards (no animation on comparison screen)
         setTimeout(() => {
             comparisonCards.forEach(card => {
                 this.setup3DCardEvents(card);
             });
-        }, 1500);
+        }, 100);
     }
 
     displayRevealCard(player, card) {

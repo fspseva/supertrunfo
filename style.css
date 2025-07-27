@@ -742,85 +742,66 @@ body {
 }
 
 /* Animation keyframes for realistic card draw */
-@keyframes cardDrawSingle {
+@keyframes cardFlip {
   0% {
-    /* Start from deck position */
-    transform: translate(50vw, -100vh) rotate(8deg) scale(0.3);
-    opacity: 0;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-  }
-  40% {
-    /* Mid-flight with momentum */
-    transform: translate(10vw, -20vh) rotate(-3deg) scale(0.7);
-    opacity: 0.8;
-    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
-  }
-  70% {
-    /* Approaching final position */
-    transform: translate(-5vw, 0) rotate(1deg) scale(var(--single-card-scale));
+    /* Start face-down (back of card) */
+    transform: perspective(1000px) rotateY(180deg) scale(var(--single-card-scale));
     opacity: 1;
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.35);
   }
-  85% {
-    /* Slight overshoot for bounce effect */
-    transform: translate(0, -1vh) rotate(-0.5deg) scale(calc(var(--single-card-scale) * 1.02));
-    box-shadow: var(--shadow-hover);
+  
+  50% {
+    /* Mid-flip (card on edge) */
+    transform: perspective(1000px) rotateY(90deg) scale(calc(var(--single-card-scale) * 1.05));
+    opacity: 1;
   }
+  
   100% {
-    /* Final settled position */
-    transform: translate(0, 0) rotate(0deg) scale(var(--single-card-scale));
+    /* Face-up (front of card revealed) */
+    transform: perspective(1000px) rotateY(0deg) scale(var(--single-card-scale));
     opacity: 1;
-    box-shadow: var(--shadow-card);
   }
 }
 
-@keyframes cardDrawComparison {
-  0% {
-    /* Start from deck position */
-    transform: translate(30vw, -100vh) rotate(8deg) scale(0.2);
-    opacity: 0;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-  }
-  40% {
-    /* Mid-flight with momentum */
-    transform: translate(8vw, -15vh) rotate(-3deg) scale(0.5);
-    opacity: 0.8;
-    box-shadow: 0 12px 25px rgba(0, 0, 0, 0.4);
-  }
-  70% {
-    /* Approaching final position */
-    transform: translate(-3vw, 0) rotate(1deg) scale(var(--comparison-card-scale));
-    opacity: 1;
-    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.35);
-  }
-  85% {
-    /* Slight overshoot for bounce effect */
-    transform: translate(0, -0.5vh) rotate(-0.5deg) scale(calc(var(--comparison-card-scale) * 1.02));
-    box-shadow: var(--shadow-hover);
-  }
-  100% {
-    /* Final settled position */
-    transform: translate(0, 0) rotate(0deg) scale(var(--comparison-card-scale));
-    opacity: 1;
-    box-shadow: var(--shadow-card);
-  }
-}
 
 /* Animation classes to trigger the effect */
-.card-draw-animation-single {
-  animation: cardDrawSingle 1.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
-  /* Override transform during animation */
+.card-flip-animation {
+  animation: cardFlip 1.2s ease-in-out forwards;
   transform-style: preserve-3d;
   /* Disable hover effects during animation */
   pointer-events: none;
 }
 
-.card-draw-animation-comparison {
-  animation: cardDrawComparison 1.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
-  /* Override transform during animation */
-  transform-style: preserve-3d;
-  /* Disable hover effects during animation */
-  pointer-events: none;
+/* Card back design for flip effect */
+.card.card-flip-animation::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: var(--radius-card);
+  z-index: 10;
+  backface-visibility: hidden;
+  transform: rotateY(180deg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.card.card-flip-animation::after {
+  content: 'SUPER TRUNFO';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotateY(180deg);
+  color: white;
+  font-size: clamp(18px, 4vw, 28px);
+  font-weight: bold;
+  text-align: center;
+  z-index: 11;
+  backface-visibility: hidden;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
 }
 
 /* Prevent 3D hover effects from interfering with card draw animation */
