@@ -8,6 +8,7 @@ class SuperTrunfoGameStatic {
         this.initializeElements();
         this.attachEventListeners();
         this.loadCarsData();
+        this.initializeHolographicCards();
     }
 
     async loadCarsData() {
@@ -440,6 +441,159 @@ class SuperTrunfoGameStatic {
         this.currentPhase = 'WELCOME';
         this.selectedAttribute = null;
         this.showScreen('welcome');
+    }
+
+    // Holographic Card Effect Implementation
+    initializeHolographicCards() {
+        const cards = document.querySelectorAll('.card');
+        cards.forEach(card => {
+            this.setupHolographicEffect(card);
+        });
+    }
+
+    setupHolographicEffect(card) {
+        let rafId = null;
+        let isActive = false;
+        
+        const clamp = (val, min = 0, max = 100) => Math.min(Math.max(val, min), max);
+        const round = (val, precision = 3) => parseFloat(val.toFixed(precision));
+        const adjust = (val, fromMin, fromMax, toMin, toMax) => 
+            round(toMin + ((toMax - toMin) * (val - fromMin)) / (fromMax - fromMin));
+        const easeInOutCubic = (x) => 
+            x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2;
+
+        const updateTransform = (offsetX, offsetY, rect) => {
+            if (!rect) return;
+            
+            const { width, height } = rect;
+            const percentX = clamp((100 / width) * offsetX);
+            const percentY = clamp((100 / height) * offsetY);
+            const centerX = percentX - 50;
+            const centerY = percentY - 50;
+            const distanceFromCenter = Math.sqrt(centerX * centerX + centerY * centerY);
+
+            // Calculate rotation based on mouse position
+            const rotateX = round(adjust(percentY, 0, 100, 20, -20), 2);
+            const rotateY = round(adjust(percentX, 0, 100, -20, 20), 2);
+            
+            // Calculate effect intensities
+            const pointerFromCenter = round(clamp(distanceFromCenter, 0, 50) / 50, 2);
+            const rainbowOpacity = round(0.4 * pointerFromCenter, 2);
+            const foilOpacity = round(0.6 * pointerFromCenter, 2);
+            const glareOpacity = round(0.8 * pointerFromCenter, 2);
+            const glareAngle = round(Math.atan2(centerY, centerX) * (180 / Math.PI), 2);
+            
+            // Background positions
+            const bgPosX = round(adjust(percentX, 0, 100, 0, 100), 2);
+            const bgPosY = round(adjust(percentY, 0, 100, 0, 100), 2);
+            
+            // Update CSS custom properties
+            card.style.setProperty('--holo-pointer-x', `${percentX}%`);
+            card.style.setProperty('--holo-pointer-y', `${percentY}%`);
+            card.style.setProperty('--holo-pointer-from-center', pointerFromCenter);
+            card.style.setProperty('--holo-card-rotation-x', `${rotateX}deg`);
+            card.style.setProperty('--holo-card-rotation-y', `${rotateY}deg`);
+            card.style.setProperty('--holo-background-position-x', `${bgPosX}%`);
+            card.style.setProperty('--holo-background-position-y', `${bgPosY}%`);
+            card.style.setProperty('--holo-glare-opacity', glareOpacity);
+            card.style.setProperty('--holo-glare-angle', glareAngle);
+            card.style.setProperty('--holo-rainbow-opacity', rainbowOpacity);
+            card.style.setProperty('--holo-rainbow-saturation', 1 + pointerFromCenter);
+            card.style.setProperty('--holo-foil-opacity', foilOpacity);
+            card.style.setProperty('--holo-background-animation', 'running');
+        };
+
+        const resetTransform = () => {
+            const duration = 600;
+            const startTime = performance.now();
+            
+            const animate = (currentTime) => {
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                const easedProgress = easeInOutCubic(progress);
+                
+                // Interpolate back to center
+                const centerRotateX = 0;
+                const centerRotateY = 0;
+                const centerOpacity = 0;
+                const centerPosition = 50;
+                
+                card.style.setProperty('--holo-pointer-x', `${centerPosition}%`);
+                card.style.setProperty('--holo-pointer-y', `${centerPosition}%`);
+                card.style.setProperty('--holo-pointer-from-center', centerOpacity);
+                card.style.setProperty('--holo-card-rotation-x', `${centerRotateX * (1 - easedProgress)}deg`);
+                card.style.setProperty('--holo-card-rotation-y', `${centerRotateY * (1 - easedProgress)}deg`);
+                card.style.setProperty('--holo-background-position-x', `${centerPosition}%`);
+                card.style.setProperty('--holo-background-position-y', `${centerPosition}%`);
+                card.style.setProperty('--holo-glare-opacity', centerOpacity * (1 - easedProgress));
+                card.style.setProperty('--holo-rainbow-opacity', centerOpacity * (1 - easedProgress));
+                card.style.setProperty('--holo-foil-opacity', centerOpacity * (1 - easedProgress));
+                
+                if (progress < 1) {
+                    rafId = requestAnimationFrame(animate);
+                } else {
+                    card.style.setProperty('--holo-background-animation', 'paused');
+                    isActive = false;
+                }
+            };
+            
+            if (rafId) {
+                cancelAnimationFrame(rafId);
+            }
+            rafId = requestAnimationFrame(animate);
+        };
+
+        // Mouse events
+        card.addEventListener('mouseenter', () => {
+            isActive = true;
+            if (rafId) {
+                cancelAnimationFrame(rafId);
+            }
+        });
+        
+        card.addEventListener('mousemove', (e) => {
+            if (!isActive) return;
+            
+            const rect = card.getBoundingClientRect();
+            const offsetX = e.clientX - rect.left;
+            const offsetY = e.clientY - rect.top;
+            
+            updateTransform(offsetX, offsetY, rect);
+        });
+        
+        card.addEventListener('mouseleave', () => {
+            if (isActive) {
+                resetTransform();
+            }
+        });
+        
+        // Touch events for mobile
+        card.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            isActive = true;
+            if (rafId) {
+                cancelAnimationFrame(rafId);
+            }
+        });
+        
+        card.addEventListener('touchmove', (e) => {
+            if (!isActive) return;
+            e.preventDefault();
+            
+            const rect = card.getBoundingClientRect();
+            const touch = e.touches[0];
+            const offsetX = touch.clientX - rect.left;
+            const offsetY = touch.clientY - rect.top;
+            
+            updateTransform(offsetX, offsetY, rect);
+        });
+        
+        card.addEventListener('touchend', (e) => {
+            e.preventDefault();
+            if (isActive) {
+                resetTransform();
+            }
+        });
     }
 }
 

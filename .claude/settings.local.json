@@ -6,7 +6,9 @@
       "Bash(git add:*)",
       "Bash(python3:*)",
       "WebFetch(domain:github.com)",
-      "WebFetch(domain:shiny3dcard.netlify.app)"
+      "WebFetch(domain:shiny3dcard.netlify.app)",
+      "WebFetch(domain:21st.dev)",
+      "Bash(open index-static.html)"
     ],
     "deny": []
   }
