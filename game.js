@@ -121,6 +121,9 @@ class SuperTrunfoGameStatic {
         
         this.winnerText = document.getElementById('winner-text');
         this.finalStatsText = document.getElementById('final-stats-text');
+        
+        // Deck visualization elements
+        this.deckStack = document.getElementById('deck-stack');
     }
 
     attachEventListeners() {
@@ -151,7 +154,8 @@ class SuperTrunfoGameStatic {
     }
     
     setup3DCardEvents(card) {
-        const shineOverlay = card.querySelector('.shine-overlay');
+        // Find shine overlay in card-front if it exists, otherwise use direct child
+        const shineOverlay = card.querySelector('.card-front .shine-overlay') || card.querySelector('.shine-overlay');
         let isThrottled = false;
         
         const handleMouseMove = (e) => {
@@ -174,7 +178,7 @@ class SuperTrunfoGameStatic {
             const rotateX = -(mouseY / cardHeight) * 15;
             const rotateY = (mouseX / cardWidth) * 15;
             
-            // Calculate holographic effect positions
+            // Calculate shine effect positions
             const pointerX = ((e.clientX - rect.left) / cardWidth) * 100;
             const pointerY = ((e.clientY - rect.top) / cardHeight) * 100;
             const angle = Math.atan2(mouseY, mouseX) * (180 / Math.PI);
@@ -188,16 +192,16 @@ class SuperTrunfoGameStatic {
             card.style.setProperty('--rotate-y', `${rotateY}deg`);
             card.style.setProperty('--scale', baseScale);
             
-            // Update CSS custom properties for holographic effects
-            card.style.setProperty('--card-rotation-x', `${rotateX}deg`);
-            card.style.setProperty('--card-rotation-y', `${rotateY}deg`);
-            card.style.setProperty('--holo-pointer-x', `${pointerX}%`);
-            card.style.setProperty('--holo-pointer-y', `${pointerY}%`);
-            card.style.setProperty('--holo-glare-angle', `${angle}`);
-            card.style.setProperty('--holo-rainbow-opacity', '0.6');
-            card.style.setProperty('--holo-foil-opacity', '0.4');
-            card.style.setProperty('--holo-glare-opacity', '0.3');
-            card.style.setProperty('--holo-background-animation', 'running');
+            // Update CSS custom properties for subtle shine effects
+            card.style.setProperty('--shine-x', `${pointerX}%`);
+            card.style.setProperty('--shine-y', `${pointerY}%`);
+            card.style.setProperty('--shine-angle', `${angle}`);
+            
+            // Calculate shine opacity based on mouse distance from center (subtle effect)
+            const distanceFromCenter = Math.sqrt(Math.pow(mouseX / cardWidth, 2) + Math.pow(mouseY / cardHeight, 2));
+            const maxShineOpacity = 0.3; // Much more subtle than the original holographic effect
+            const shineOpacity = Math.min(distanceFromCenter * maxShineOpacity, maxShineOpacity);
+            card.style.setProperty('--shine-opacity', shineOpacity);
             
             // Enhanced dynamic shadow for depth perception
             const shadowOffsetX = (mouseX / cardWidth) * 8;
@@ -208,32 +212,16 @@ class SuperTrunfoGameStatic {
                 0 15px 35px rgba(0, 0, 0, 0.15)
             `;
             
-            // Update shine overlay with dynamic gradient
-            if (shineOverlay) {
-                shineOverlay.style.background = `
-                    radial-gradient(
-                        circle at ${pointerX}% ${pointerY}%,
-                        rgba(255, 255, 255, 0.25) 0%,
-                        rgba(255, 255, 255, 0.1) 25%,
-                        rgba(255, 255, 255, 0.05) 50%,
-                        transparent 70%
-                    ),
-                    linear-gradient(
-                        ${angle}deg,
-                        transparent 30%,
-                        rgba(255, 255, 255, 0.2) 50%,
-                        transparent 70%
-                    )
-                `;
-            }
+            // The shine overlay background is now handled by CSS variables
+            // No need to manually update the background property
         };
         
         const handleMouseEnter = (e) => {
             card.classList.add('card-3d-hover');
             card.style.transition = 'transform 0.1s ease-out, box-shadow 0.3s ease';
             
-            // Enable holographic effects
-            card.style.setProperty('--holo-background-animation', 'running');
+            // Enable subtle shine effects
+            card.style.setProperty('--shine-opacity', '0.1');
         };
         
         const handleMouseLeave = (e) => {
@@ -249,24 +237,16 @@ class SuperTrunfoGameStatic {
             card.style.setProperty('--scale', baseScale);
             card.style.transition = 'transform 0.3s ease, box-shadow 0.3s ease';
             
-            // Reset CSS custom properties
-            card.style.setProperty('--card-rotation-x', '0deg');
-            card.style.setProperty('--card-rotation-y', '0deg');
-            card.style.setProperty('--holo-pointer-x', '50%');
-            card.style.setProperty('--holo-pointer-y', '50%');
-            card.style.setProperty('--holo-glare-angle', '0deg');
-            card.style.setProperty('--holo-rainbow-opacity', '0');
-            card.style.setProperty('--holo-foil-opacity', '0');
-            card.style.setProperty('--holo-glare-opacity', '0');
-            card.style.setProperty('--holo-background-animation', 'paused');
+            // Reset CSS custom properties for shine effects
+            card.style.setProperty('--shine-x', '50%');
+            card.style.setProperty('--shine-y', '50%');
+            card.style.setProperty('--shine-angle', '0deg');
+            card.style.setProperty('--shine-opacity', '0');
             
             // Reset box shadow
             card.style.boxShadow = '';
             
-            // Reset shine overlay
-            if (shineOverlay) {
-                shineOverlay.style.background = '';
-            }
+            // Shine overlay resets automatically via CSS variables
         };
         
         // Touch events for mobile
@@ -382,6 +362,9 @@ class SuperTrunfoGameStatic {
         
         const currentPlayerName = this.gameState.players[this.gameState.turnPlayerId].name;
         this.turnIndicator.textContent = `Turno: ${currentPlayerName}`;
+        
+        // Update deck visualization
+        this.updateDeckDisplay();
     }
 
     showRotatePrompt() {
@@ -418,7 +401,12 @@ class SuperTrunfoGameStatic {
             
             // Trigger card flip animation after a brief delay to ensure card is displayed
             setTimeout(() => {
-                this.triggerCardFlipAnimation(this.currentCard);
+                // Animate card leaving deck first
+                this.animateCardLeavingDeck();
+                // Then trigger card flip animation
+                setTimeout(() => {
+                    this.triggerCardFlipAnimation(this.currentCard);
+                }, 200); // Small delay to coordinate animations
             }, 100);
         }, 500);
     }
@@ -428,7 +416,8 @@ class SuperTrunfoGameStatic {
         this.cardImg.src = card.imageUrl;
         this.cardImg.alt = card.name;
         
-        const attributeRows = this.currentCard.querySelectorAll('.attribute-row');
+        // Query attribute rows from the card-front element
+        const attributeRows = this.currentCard.querySelectorAll('.card-front .attribute-row');
         attributeRows.forEach(row => {
             const attr = row.dataset.attr;
             const value = card.attrs[attr];
@@ -457,12 +446,12 @@ class SuperTrunfoGameStatic {
         this.showLoading();
         
         setTimeout(() => {
-            const attributeRows = this.currentCard.querySelectorAll('.attribute-row');
+            const attributeRows = this.currentCard.querySelectorAll('.card-front .attribute-row');
             attributeRows.forEach(row => {
                 row.classList.remove('selected');
             });
             
-            const selectedRow = this.currentCard.querySelector(`[data-attr="${attribute}"]`);
+            const selectedRow = this.currentCard.querySelector(`.card-front [data-attr="${attribute}"]`);
             if (selectedRow) {
                 selectedRow.classList.add('selected');
             }
@@ -647,6 +636,7 @@ class SuperTrunfoGameStatic {
             Cartas no pot: ${this.gameState.pot.length}
         `;
         
+        this.hideDeckDisplay();
         this.showScreen('game-over');
     }
 
@@ -669,7 +659,64 @@ class SuperTrunfoGameStatic {
         this.gameState = null;
         this.currentPhase = 'WELCOME';
         this.selectedAttribute = null;
+        this.hideDeckDisplay();
         this.showScreen('welcome');
+    }
+
+    // ===========================
+    // DECK VISUALIZATION METHODS
+    // ===========================
+    
+    updateDeckDisplay() {
+        if (!this.gameState || !this.deckStack) return;
+        
+        const currentPlayer = this.gameState.players[this.gameState.turnPlayerId];
+        const remainingCards = currentPlayer.deck.length;
+        
+        // Clear existing deck cards
+        this.deckStack.innerHTML = '';
+        
+        // Calculate how many cards to show (max 5)
+        const cardsToShow = Math.min(remainingCards, 5);
+        
+        // Create deck cards
+        for (let i = 0; i < cardsToShow; i++) {
+            const deckCard = document.createElement('div');
+            deckCard.className = 'deck-card';
+            deckCard.setAttribute('data-index', i);
+            
+            // Add entering animation for new cards
+            if (i === 0) {
+                deckCard.classList.add('entering');
+            }
+            
+            this.deckStack.appendChild(deckCard);
+        }
+        
+        // Update deck label with current player
+        const deckLabel = document.querySelector('.deck-label');
+        if (deckLabel) {
+            const playerName = currentPlayer.name;
+            deckLabel.textContent = `${playerName}: ${remainingCards}`;
+        }
+    }
+    
+    animateCardLeavingDeck() {
+        if (!this.deckStack) return;
+        
+        const topCard = this.deckStack.querySelector('.deck-card:first-child');
+        if (topCard) {
+            topCard.classList.add('leaving');
+            
+            // Don't remove or update here - let the natural game flow handle it
+            // The animation will just make the top card fly away visually
+        }
+    }
+    
+    hideDeckDisplay() {
+        if (this.deckStack) {
+            this.deckStack.innerHTML = '';
+        }
     }
 }
 

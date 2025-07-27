@@ -87,21 +87,11 @@
   --card-perspective: 1000px;
   --card-max-rotation: 15deg;
   
-  /* Holographic Card Effect Variables */
-  --holo-pointer-x: 50%;
-  --holo-pointer-y: 50%;
-  --holo-pointer-from-center: 0;
-  --holo-card-rotation-x: 0deg;
-  --holo-card-rotation-y: 0deg;
-  --holo-background-position-x: 50%;
-  --holo-background-position-y: 50%;
-  --holo-background-animation: paused;
-  --holo-background-size: 300% 300%;
-  --holo-glare-opacity: 0;
-  --holo-glare-angle: 0deg;
-  --holo-rainbow-opacity: 0;
-  --holo-rainbow-saturation: 1;
-  --holo-foil-opacity: 0;
+  /* Subtle Shine Effect Variables */
+  --shine-x: 50%;
+  --shine-y: 50%;
+  --shine-opacity: 0;
+  --shine-angle: 0deg;
 }
 
 body {
@@ -344,7 +334,7 @@ body {
   will-change: transform, box-shadow;
 }
 
-/* Enhanced Holographic Rainbow Background */
+/* Subtle Shine Background */
 .card::before {
   content: '';
   position: absolute;
@@ -352,44 +342,21 @@ body {
   left: 0;
   right: 0;
   bottom: 0;
-  background: 
-    conic-gradient(
-      from calc(var(--holo-glare-angle) * 1deg) at var(--holo-pointer-x) var(--holo-pointer-y),
-      hsl(0, 100%, 50%) 0deg,
-      hsl(60, 100%, 50%) 60deg,
-      hsl(120, 100%, 50%) 120deg,
-      hsl(180, 100%, 50%) 180deg,
-      hsl(240, 100%, 50%) 240deg,
-      hsl(300, 100%, 50%) 300deg,
-      hsl(360, 100%, 50%) 360deg
-    ), 
-    radial-gradient(
-      circle at var(--holo-pointer-x) var(--holo-pointer-y),
-      rgba(255, 255, 255, 0.4) 0%,
-      rgba(255, 255, 255, 0.2) 30%,
-      transparent 70%
-    ),
-    linear-gradient(
-      calc(var(--holo-glare-angle) * 1deg),
-      transparent 30%,
-      rgba(255, 255, 255, 0.3) 50%,
-      transparent 70%
-    );
-  background-size: var(--holo-background-size), 300% 300%, 200% 200%;
-  background-position: 
-    var(--holo-background-position-x) var(--holo-background-position-y),
-    var(--holo-pointer-x) var(--holo-pointer-y),
-    var(--holo-pointer-x) var(--holo-pointer-y);
-  opacity: var(--holo-rainbow-opacity);
-  mix-blend-mode: color-dodge;
+  background: linear-gradient(
+    calc(var(--shine-angle) * 1deg),
+    transparent 30%,
+    rgba(255, 255, 255, 0.4) var(--shine-x),
+    transparent 70%
+  );
+  opacity: var(--shine-opacity);
+  mix-blend-mode: overlay;
   pointer-events: none;
   z-index: 1;
   border-radius: var(--radius-card);
-  filter: saturate(var(--holo-rainbow-saturation)) brightness(1.5);
-  animation: holo-rainbow-shift 4s ease-in-out infinite var(--holo-background-animation);
+  transition: opacity 0.3s ease;
 }
 
-/* Foil Effect Layer */
+/* Secondary Shine Layer */
 .card::after {
   content: '';
   position: absolute;
@@ -398,55 +365,40 @@ body {
   right: 0;
   bottom: 0;
   background: radial-gradient(
-    ellipse at var(--holo-pointer-x) var(--holo-pointer-y),
-    rgba(255, 255, 255, 0.8) 0%,
-    rgba(255, 255, 255, 0.4) 20%,
-    rgba(255, 255, 255, 0.1) 40%,
-    transparent 70%
-  ),
-  linear-gradient(
-    calc(var(--holo-glare-angle) * 1deg),
-    transparent 30%,
-    rgba(255, 255, 255, 0.6) 50%,
-    transparent 70%
+    circle at var(--shine-x) var(--shine-y),
+    rgba(255, 255, 255, 0.2) 0%,
+    rgba(255, 255, 255, 0.1) 25%,
+    transparent 60%
   );
-  opacity: var(--holo-foil-opacity);
-  mix-blend-mode: overlay;
+  opacity: calc(var(--shine-opacity) * 0.7);
+  mix-blend-mode: soft-light;
   pointer-events: none;
   z-index: 2;
   border-radius: var(--radius-card);
+  transition: opacity 0.3s ease;
 }
 
-/* Glare Effect */
-.card .holo-glare {
+/* Enhanced Shine Glare */
+.card .shine-glare {
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
   background: linear-gradient(
-    calc(var(--holo-glare-angle) * 1deg),
+    calc(var(--shine-angle) * 1deg),
     transparent 20%,
-    rgba(255, 255, 255, 0.8) 50%,
+    rgba(255, 255, 255, 0.3) 50%,
     transparent 80%
   );
-  opacity: var(--holo-glare-opacity);
+  opacity: calc(var(--shine-opacity) * 0.8);
   mix-blend-mode: overlay;
   pointer-events: none;
   z-index: 3;
   border-radius: var(--radius-card);
-  transform: translateX(calc((var(--holo-pointer-x) - 50%) * 0.2)) 
-             translateY(calc((var(--holo-pointer-y) - 50%) * 0.2));
+  transition: opacity 0.2s ease;
 }
 
-@keyframes holo-rainbow-shift {
-  0%, 100% {
-    background-position: 0% 50%, var(--holo-background-position-x) var(--holo-background-position-y);
-  }
-  50% {
-    background-position: 100% 50%, var(--holo-background-position-x) var(--holo-background-position-y);
-  }
-}
 
 /* Card Footer Text */
 .card .card-footer {
@@ -498,7 +450,7 @@ body {
   box-shadow: var(--shadow-hover);
 }
 
-/* Shine overlay for subtle lighting effects */
+/* Main shine overlay for mouse tracking */
 .shine-overlay {
   position: absolute;
   top: 0;
@@ -508,11 +460,17 @@ body {
   pointer-events: none;
   z-index: 5;
   border-radius: var(--radius-card);
-  opacity: 0.8;
-  transition: background 0.1s ease-out;
+  background: linear-gradient(
+    55deg,
+    transparent,
+    rgba(255, 255, 255, 0.1) var(--shine-x),
+    transparent
+  );
+  opacity: var(--shine-opacity);
+  transition: opacity 0.2s ease-out;
 }
 
-/* Comparison cards maintain holographic effects and 3D rotation */
+/* Comparison cards maintain shine effects and 3D rotation */
 .cards-comparison .card {
   /* Use base dimensions with comparison scaling and 3D rotation */
   width: var(--card-base-width);
@@ -741,10 +699,10 @@ body {
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
 }
 
-/* Animation keyframes for realistic card draw */
+/* Animation keyframes for realistic card flip - back to front */
 @keyframes cardFlip {
   0% {
-    /* Start face-down (back of card) */
+    /* Start showing the back (flip card 180deg to reveal back) */
     transform: perspective(1000px) rotateY(180deg) scale(var(--single-card-scale));
     opacity: 1;
   }
@@ -756,7 +714,7 @@ body {
   }
   
   100% {
-    /* Face-up (front of card revealed) */
+    /* End showing the front (normal position) */
     transform: perspective(1000px) rotateY(0deg) scale(var(--single-card-scale));
     opacity: 1;
   }
@@ -771,37 +729,111 @@ body {
   pointer-events: none;
 }
 
-/* Card back design for flip effect */
-.card.card-flip-animation::before {
-  content: '';
+/* Card front and back structure for proper flip */
+.card-front,
+.card-back {
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  border-radius: var(--radius-card);
-  z-index: 10;
   backface-visibility: hidden;
-  transform: rotateY(180deg);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  border-radius: var(--radius-card);
+  transform-style: preserve-3d;
 }
 
-.card.card-flip-animation::after {
-  content: 'SUPER TRUNFO';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%) rotateY(180deg);
-  color: white;
-  font-size: clamp(18px, 4vw, 28px);
-  font-weight: bold;
+/* Card front (normal card content) - starts visible */
+.card-front {
+  transform: rotateY(0deg);
+  z-index: 2;
+}
+
+/* Card back design - starts hidden behind */
+.card-back {
+  transform: rotateY(180deg);
+  z-index: 1;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  box-shadow: inset 0 0 30px rgba(255, 255, 255, 0.1);
+}
+
+/* Card back content */
+.card-back-content {
   text-align: center;
-  z-index: 11;
-  backface-visibility: hidden;
+  color: white;
+  padding: 40px;
+}
+
+.card-back-logo {
+  font-size: clamp(28px, 6vw, 42px);
+  font-weight: bold;
+  font-family: var(--font-title);
+  text-shadow: 0 3px 6px rgba(0, 0, 0, 0.5);
+  margin-bottom: 20px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  background: linear-gradient(45deg, #ffffff, #e2e8f0);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.card-back-subtitle {
+  font-size: clamp(16px, 3.5vw, 22px);
+  font-weight: 600;
+  opacity: 0.95;
+  margin-bottom: 30px;
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+  letter-spacing: 1px;
+}
+
+.card-back-pattern {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+    /* Corner highlights */
+    radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.15) 0%, transparent 40%),
+    radial-gradient(circle at 80% 80%, rgba(255, 255, 255, 0.15) 0%, transparent 40%),
+    radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.08) 0%, transparent 40%),
+    radial-gradient(circle at 20% 80%, rgba(255, 255, 255, 0.08) 0%, transparent 40%),
+    /* Center glow */
+    radial-gradient(ellipse at center, rgba(255, 255, 255, 0.05) 0%, transparent 60%),
+    /* Subtle grid pattern */
+    linear-gradient(0deg, transparent 49%, rgba(255, 255, 255, 0.03) 50%, transparent 51%),
+    linear-gradient(90deg, transparent 49%, rgba(255, 255, 255, 0.03) 50%, transparent 51%);
+  background-size: 100% 100%, 100% 100%, 100% 100%, 100% 100%, 100% 100%, 50px 50px, 50px 50px;
+  pointer-events: none;
+  border-radius: var(--radius-card);
+}
+
+/* Initial state - both sides visible for 3D flip effect */
+.card .card-back {
+  display: flex;
+}
+
+.card .card-front {
+  display: block;
+}
+
+/* Non-animating cards: hide back to show only front */
+.card:not(.card-flip-animation) .card-back {
+  display: none;
+}
+
+/* During flip animation - show both for 3D effect */
+.card.card-flip-animation .card-back {
+  display: flex;
+}
+
+.card.card-flip-animation .card-front {
+  display: block;
 }
 
 /* Prevent 3D hover effects from interfering with card draw animation */
@@ -1198,4 +1230,236 @@ body {
     .card-with-label:last-child {
         order: initial;
     }
+}
+
+/* ===========================
+   DECK VISUALIZATION
+=========================== */
+.deck-container {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+.deck-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-dark);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    background: rgba(255, 255, 255, 0.9);
+    padding: 4px 12px;
+    border-radius: 12px;
+    border: 1px solid rgba(102, 126, 234, 0.2);
+    text-align: center;
+    min-width: 80px;
+}
+
+.deck-stack {
+    position: relative;
+    width: 60px;
+    height: 84px; /* Maintains card aspect ratio (400:600 = 60:84) */
+    perspective: 800px;
+    perspective-origin: center center;
+}
+
+.deck-card {
+    position: absolute;
+    width: 60px;
+    height: 84px;
+    background: var(--grad-card);
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 8px;
+    font-weight: bold;
+    color: var(--text-light);
+    text-align: center;
+    line-height: 1.2;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+    overflow: hidden;
+    transform-style: preserve-3d;
+}
+
+/* Stack positioning - each card slightly offset for 3D effect */
+.deck-card:nth-child(1) {
+    transform: translateZ(0px) translateX(0px) translateY(0px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    z-index: 1;
+}
+
+.deck-card:nth-child(2) {
+    transform: translateZ(-2px) translateX(-1px) translateY(1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    z-index: 2;
+}
+
+.deck-card:nth-child(3) {
+    transform: translateZ(-4px) translateX(-2px) translateY(2px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
+    z-index: 3;
+}
+
+.deck-card:nth-child(4) {
+    transform: translateZ(-6px) translateX(-3px) translateY(3px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+    z-index: 4;
+}
+
+.deck-card:nth-child(5) {
+    transform: translateZ(-8px) translateX(-4px) translateY(4px);
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.35);
+    z-index: 5;
+}
+
+/* Card back design - same as flip animation */
+.deck-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 8px;
+    z-index: 1;
+}
+
+.deck-card::after {
+    content: 'ST';
+    position: relative;
+    z-index: 2;
+    font-size: 10px;
+    font-weight: bold;
+    color: white;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+/* Hover effect for deck */
+.deck-stack:hover .deck-card {
+    transform: scale(1.05);
+}
+
+.deck-stack:hover .deck-card:nth-child(1) {
+    transform: translateZ(2px) translateX(1px) translateY(-1px) scale(1.05);
+}
+
+.deck-stack:hover .deck-card:nth-child(2) {
+    transform: translateZ(0px) translateX(0px) translateY(0px) scale(1.05);
+}
+
+.deck-stack:hover .deck-card:nth-child(3) {
+    transform: translateZ(-2px) translateX(-1px) translateY(1px) scale(1.05);
+}
+
+.deck-stack:hover .deck-card:nth-child(4) {
+    transform: translateZ(-4px) translateX(-2px) translateY(2px) scale(1.05);
+}
+
+.deck-stack:hover .deck-card:nth-child(5) {
+    transform: translateZ(-6px) translateX(-3px) translateY(3px) scale(1.05);
+}
+
+/* Animation for card leaving deck */
+.deck-card.leaving {
+    animation: cardLeaving 0.8s ease-in-out forwards;
+    z-index: 10;
+}
+
+@keyframes cardLeaving {
+    0% {
+        transform: translateZ(2px) translateX(1px) translateY(-1px) scale(1.05);
+        opacity: 1;
+    }
+    30% {
+        transform: translateZ(10px) translateX(20px) translateY(-10px) scale(1.1) rotate(5deg);
+        opacity: 0.9;
+    }
+    70% {
+        transform: translateZ(20px) translateX(100px) translateY(-30px) scale(0.8) rotate(15deg);
+        opacity: 0.5;
+    }
+    100% {
+        transform: translateZ(30px) translateX(200px) translateY(-50px) scale(0.3) rotate(25deg);
+        opacity: 0;
+    }
+}
+
+/* Animation for deck size changes */
+.deck-stack {
+    transition: transform 0.3s ease;
+}
+
+.deck-card.entering {
+    animation: cardEntering 0.5s ease-out forwards;
+}
+
+@keyframes cardEntering {
+    0% {
+        transform: translateZ(-20px) translateX(-10px) translateY(10px) scale(0.8);
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+/* Responsive adjustments for deck */
+@media (max-width: 768px) {
+    .deck-container {
+        top: 15px;
+        right: 15px;
+        scale: 0.9;
+    }
+    
+    .deck-label {
+        font-size: 10px;
+        padding: 3px 8px;
+        min-width: 70px;
+    }
+    
+    .deck-stack {
+        width: 50px;
+        height: 70px;
+    }
+    
+    .deck-card {
+        width: 50px;
+        height: 70px;
+        border-radius: 6px;
+    }
+    
+    .deck-card::after {
+        font-size: 8px;
+    }
+}
+
+@media (max-width: 480px) {
+    .deck-container {
+        top: 10px;
+        right: 10px;
+        scale: 0.8;
+    }
+    
+    .deck-label {
+        font-size: 9px;
+        padding: 2px 6px;
+        min-width: 60px;
+    }
+}
+
+/* Hide deck on welcome and rotate screens */
+#welcome-screen .deck-container,
+#rotate-screen .deck-container,
+#game-over-screen .deck-container {
+    display: none;
 }

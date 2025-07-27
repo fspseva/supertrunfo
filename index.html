@@ -45,6 +45,14 @@
                 <div class="turn-info">
                     <span id="turn-indicator">Turno: Jogador 1</span>
                 </div>
+                
+                <!-- Deck Visualization -->
+                <div class="deck-container">
+                    <div class="deck-label">Suas Cartas</div>
+                    <div id="deck-stack" class="deck-stack">
+                        <!-- Dynamic card stack will be inserted here -->
+                    </div>
+                </div>
             </div>
 
             <div class="game-content">
@@ -52,33 +60,46 @@
                 <div id="card-selection" class="phase-content">
                     <div class="card-container">
                         <div class="card" id="current-card">
-                            <div class="shine-overlay"></div>
-                            <div class="card-header">
-                                <h3 id="card-name">Nome do Carro</h3>
+                            <!-- Card Back -->
+                            <div class="card-back">
+                                <div class="card-back-pattern"></div>
+                                <div class="card-back-content">
+                                    <div class="card-back-logo">Super Trunfo</div>
+                                    <div class="card-back-subtitle">Edição Carros</div>
+                                </div>
                             </div>
-                            <div class="card-image">
-                                <img id="card-img" src="" alt="Carro">
-                            </div>
-                            <div class="card-attributes">
-                                <div class="attribute-row" data-attr="maxSpeed">
-                                    <span class="attr-name">Velocidade Máxima</span>
-                                    <span class="attr-value"></span>
+                            
+                            <!-- Card Front -->
+                            <div class="card-front">
+                                <div class="shine-overlay"></div>
+                                <div class="shine-glare"></div>
+                                <div class="card-header">
+                                    <h3 id="card-name">Nome do Carro</h3>
                                 </div>
-                                <div class="attribute-row" data-attr="power">
-                                    <span class="attr-name">Potência</span>
-                                    <span class="attr-value"></span>
+                                <div class="card-image">
+                                    <img id="card-img" src="" alt="Carro">
                                 </div>
-                                <div class="attribute-row" data-attr="acceleration">
-                                    <span class="attr-name">0-100 km/h</span>
-                                    <span class="attr-value"></span>
-                                </div>
-                                <div class="attribute-row" data-attr="displacement">
-                                    <span class="attr-name">Cilindrada</span>
-                                    <span class="attr-value"></span>
-                                </div>
-                                <div class="attribute-row" data-attr="weight">
-                                    <span class="attr-name">Peso</span>
-                                    <span class="attr-value"></span>
+                                <div class="card-attributes">
+                                    <div class="attribute-row" data-attr="maxSpeed">
+                                        <span class="attr-name">Velocidade Máxima</span>
+                                        <span class="attr-value"></span>
+                                    </div>
+                                    <div class="attribute-row" data-attr="power">
+                                        <span class="attr-name">Potência</span>
+                                        <span class="attr-value"></span>
+                                    </div>
+                                    <div class="attribute-row" data-attr="acceleration">
+                                        <span class="attr-name">0-100 km/h</span>
+                                        <span class="attr-value"></span>
+                                    </div>
+                                    <div class="attribute-row" data-attr="displacement">
+                                        <span class="attr-name">Cilindrada</span>
+                                        <span class="attr-value"></span>
+                                    </div>
+                                    <div class="attribute-row" data-attr="weight">
+                                        <span class="attr-name">Peso</span>
+                                        <span class="attr-value"></span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -95,6 +116,7 @@
                             <div class="player-label">Jogador 1</div>
                             <div class="card player-a-card">
                                 <div class="shine-overlay"></div>
+                                <div class="shine-glare"></div>
                                 <div class="card-header">
                                     <h3 id="card-a-name">Nome do Carro</h3>
                                 </div>
@@ -135,6 +157,7 @@
                             <div class="player-label">Jogador 2</div>
                             <div class="card player-b-card">
                                 <div class="shine-overlay"></div>
+                                <div class="shine-glare"></div>
                                 <div class="card-header">
                                     <h3 id="card-b-name">Nome do Carro</h3>
                                 </div>
