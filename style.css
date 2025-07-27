@@ -387,9 +387,9 @@ body {
   bottom: 0;
   background: linear-gradient(
     calc(var(--shine-angle) * 1deg),
-    transparent 20%,
+    transparent 40%,
     rgba(255, 255, 255, 0.3) 50%,
-    transparent 80%
+    transparent 60%
   );
   opacity: calc(var(--shine-opacity) * 0.8);
   mix-blend-mode: overlay;
