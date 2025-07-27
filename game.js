@@ -307,6 +307,34 @@ class SuperTrunfoGameStatic {
         card.addEventListener('touchend', handleTouchEnd, { passive: true });
     }
 
+    triggerCardDrawAnimation(cardElement, type = 'single') {
+        if (!cardElement) return;
+        
+        // Reset any existing animations
+        cardElement.classList.remove('card-draw-animation-single', 'card-draw-animation-comparison', 'card-draw-complete');
+        
+        // Set initial state
+        cardElement.classList.add('card-draw-enter');
+        
+        // Force reflow to ensure initial state is applied
+        cardElement.offsetHeight;
+        
+        // Remove initial state and trigger animation
+        cardElement.classList.remove('card-draw-enter');
+        
+        if (type === 'single') {
+            cardElement.classList.add('card-draw-animation-single');
+        } else if (type === 'comparison') {
+            cardElement.classList.add('card-draw-animation-comparison');
+        }
+        
+        // Clean up animation classes after animation completes
+        setTimeout(() => {
+            cardElement.classList.remove('card-draw-animation-single', 'card-draw-animation-comparison');
+            cardElement.classList.add('card-draw-complete');
+        }, type === 'single' ? 1500 : 1300);
+    }
+
     showLoading() {
         this.loadingOverlay.classList.remove('hidden');
     }
@@ -394,6 +422,11 @@ class SuperTrunfoGameStatic {
             this.cardReveal.classList.add('hidden');
             this.showScreen('game');
             this.hideLoading();
+            
+            // Trigger card draw animation after a brief delay to ensure card is displayed
+            setTimeout(() => {
+                this.triggerCardDrawAnimation(this.currentCard, 'single');
+            }, 100);
         }, 500);
     }
 
@@ -490,11 +523,25 @@ class SuperTrunfoGameStatic {
         this.cardSelection.classList.add('hidden');
         this.cardReveal.classList.remove('hidden');
         
-        // Reinitialize 3D effects for comparison cards
+        // Get comparison cards reference
         const comparisonCards = document.querySelectorAll('.cards-comparison .card');
-        comparisonCards.forEach(card => {
-            this.setup3DCardEvents(card);
-        });
+        
+        // Trigger card draw animation for comparison cards
+        setTimeout(() => {
+            comparisonCards.forEach((card, index) => {
+                // Stagger the animations slightly for a more dynamic effect
+                setTimeout(() => {
+                    this.triggerCardDrawAnimation(card, 'comparison');
+                }, index * 200);
+            });
+        }, 100);
+        
+        // Reinitialize 3D effects for comparison cards after animation
+        setTimeout(() => {
+            comparisonCards.forEach(card => {
+                this.setup3DCardEvents(card);
+            });
+        }, 1500);
     }
 
     displayRevealCard(player, card) {
