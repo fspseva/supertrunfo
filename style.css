@@ -310,30 +310,112 @@ body {
   background: var(--grad-card);
   border-radius: var(--radius-card);
   box-shadow: var(--shadow-card);
-  transition: var(--transition-smooth);
+  transition: transform 0.1s ease-out, box-shadow 0.3s ease;
   border: 2px solid rgba(255, 255, 255, 0.1);
   overflow: hidden;
   backdrop-filter: blur(10px);
+  transform-style: preserve-3d;
+  cursor: pointer;
+  will-change: transform, box-shadow;
 }
 
-.card:hover {
-  transform: translateY(-8px) scale(calc(var(--single-card-scale) * 1.02));
-  box-shadow: var(--shadow-hover);
-  border-color: rgba(255, 255, 255, 0.2);
+/* 3D Holographic Card Effects */
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 0, 150, 0.1) 0%,
+    rgba(0, 255, 255, 0.1) 25%,
+    rgba(255, 255, 0, 0.1) 50%,
+    rgba(255, 0, 255, 0.1) 75%,
+    rgba(0, 255, 150, 0.1) 100%
+  );
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+  z-index: 1;
+  border-radius: var(--radius-card);
 }
 
-.card:active {
-  transform: translateY(-4px) scale(calc(var(--single-card-scale) * 1.01));
-  transition: var(--transition-quick);
+.card::after {
+  content: "Super Trunfo Online";
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 14px;
+  font-family: var(--font-footer);
+  font-style: italic;
+  font-weight: var(--fw-regular);
+  text-align: center;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+  opacity: 0.8;
+  z-index: 3;
 }
 
-/* Comparison cards hover effects */
-.cards-comparison .card:hover {
-  transform: translateY(-8px) scale(calc(var(--comparison-card-scale) * 1.02));
+.card.card-3d-hover {
+  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.3), 
+              0 15px 30px rgba(0, 0, 0, 0.2),
+              0 0 0 1px rgba(255, 255, 255, 0.2),
+              inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.4);
 }
 
-.cards-comparison .card:active {
-  transform: translateY(-4px) scale(calc(var(--comparison-card-scale) * 1.01));
+.card.card-3d-hover::before {
+  opacity: 0.6;
+}
+
+/* Shine effect overlay */
+.card .shine-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    115deg,
+    transparent 40%,
+    rgba(255, 255, 255, 0.15) 50%,
+    rgba(255, 255, 255, 0.25) 52%,
+    transparent 60%
+  );
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  pointer-events: none;
+  z-index: 2;
+  border-radius: var(--radius-card);
+  mix-blend-mode: overlay;
+}
+
+.card.card-3d-hover .shine-overlay {
+  opacity: 1;
+}
+
+/* Enhanced holographic rainbow effect */
+.card.card-3d-hover {
+  position: relative;
+}
+
+.card.card-3d-hover .card-header,
+.card.card-3d-hover .card-image,
+.card.card-3d-hover .card-attributes {
+  position: relative;
+  z-index: 2;
+}
+
+/* Remove comparison-specific overrides since we want consistent behavior */
+.cards-comparison .card {
+  /* Use base dimensions with comparison scaling */
+  width: var(--card-base-width);
+  height: var(--card-base-height);
+  transform: scale(var(--comparison-card-scale));
+  transform-origin: center center;
 }
 
 /* ===========================
@@ -538,21 +620,7 @@ body {
 /* ===========================
    FOOTER - FIXED POSITIONING
 =========================== */
-.card::after {
-  content: "Super Trunfo Online";
-  position: absolute;
-  bottom: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  color: rgba(255, 255, 255, 0.7);
-  font-size: 14px;
-  font-family: var(--font-footer);
-  font-style: italic;
-  font-weight: var(--fw-regular);
-  text-align: center;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
-  opacity: 0.8;
-}
+/* Footer moved to card hover effects section above */
 
 /* Player labels above cards */
 .player-label {
@@ -591,14 +659,6 @@ body {
     flex-direction: column;
     align-items: center;
     flex-shrink: 0;
-}
-
-.cards-comparison .card {
-    /* Use base dimensions with comparison scaling */
-    width: var(--card-base-width);
-    height: var(--card-base-height);
-    transform: scale(var(--comparison-card-scale));
-    transform-origin: center center;
 }
 
 /* Comparison cards inherit all fixed positioning from base .card styles */

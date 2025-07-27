@@ -136,6 +136,158 @@ class SuperTrunfoGameStatic {
                 this.selectAttribute(attribute);
             }
         });
+        
+        // Initialize 3D card effects
+        this.init3DCardEffects();
+    }
+    
+    init3DCardEffects() {
+        // Get all cards
+        const cards = document.querySelectorAll('.card');
+        
+        cards.forEach(card => {
+            this.setup3DCardEvents(card);
+        });
+    }
+    
+    setup3DCardEvents(card) {
+        const shineOverlay = card.querySelector('.shine-overlay');
+        let isThrottled = false;
+        
+        const handleMouseMove = (e) => {
+            // Throttle mouse movement for performance
+            if (isThrottled) return;
+            isThrottled = true;
+            requestAnimationFrame(() => {
+                isThrottled = false;
+            });
+            // Only apply effect to individual cards, not comparison cards
+            const isComparisonCard = card.closest('.cards-comparison');
+            if (isComparisonCard) return;
+            
+            const rect = card.getBoundingClientRect();
+            const cardWidth = rect.width;
+            const cardHeight = rect.height;
+            
+            // Get mouse position relative to card center
+            const mouseX = e.clientX - rect.left - cardWidth / 2;
+            const mouseY = e.clientY - rect.top - cardHeight / 2;
+            
+            // Calculate rotation angles (limit to ±20 degrees)
+            const rotateX = -(mouseY / cardHeight) * 20;
+            const rotateY = (mouseX / cardWidth) * 20;
+            
+            // Calculate shine position
+            const shineX = (e.clientX - rect.left) / cardWidth * 100;
+            const shineY = (e.clientY - rect.top) / cardHeight * 100;
+            
+            // Apply 3D transform with perspective, preserving existing scale
+            // Use CSS variables for proper scaling
+            let baseScale = '';
+            if (card.closest('.cards-comparison')) {
+                baseScale = 'scale(var(--comparison-card-scale))';
+            } else {
+                baseScale = 'scale(var(--single-card-scale))';
+            }
+            
+            card.style.transform = `${baseScale} perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+            
+            // Update shine overlay
+            if (shineOverlay) {
+                shineOverlay.style.background = `
+                    radial-gradient(
+                        circle at ${shineX}% ${shineY}%,
+                        rgba(255, 255, 255, 0.3) 0%,
+                        rgba(255, 255, 255, 0.1) 25%,
+                        transparent 50%
+                    ),
+                    linear-gradient(
+                        ${45 + (mouseX / cardWidth) * 90}deg,
+                        transparent 30%,
+                        rgba(255, 255, 255, 0.1) 50%,
+                        transparent 70%
+                    )
+                `;
+            }
+        };
+        
+        const handleMouseEnter = (e) => {
+            // Only apply effect to individual cards, not comparison cards
+            const isComparisonCard = card.closest('.cards-comparison');
+            if (isComparisonCard) return;
+            
+            card.classList.add('card-3d-hover');
+            card.style.transition = 'transform 0.1s ease-out, box-shadow 0.3s ease';
+        };
+        
+        const handleMouseLeave = (e) => {
+            // Only apply effect to individual cards, not comparison cards
+            const isComparisonCard = card.closest('.cards-comparison');
+            if (isComparisonCard) return;
+            
+            card.classList.remove('card-3d-hover');
+            
+            // Reset transforms while preserving scale
+            let baseScale = '';
+            if (card.closest('.cards-comparison')) {
+                baseScale = 'scale(var(--comparison-card-scale))';
+            } else {
+                baseScale = 'scale(var(--single-card-scale))';
+            }
+            card.style.transform = baseScale;
+            card.style.transition = 'transform 0.5s ease, box-shadow 0.3s ease';
+            
+            // Reset shine overlay
+            if (shineOverlay) {
+                shineOverlay.style.background = '';
+            }
+        };
+        
+        // Touch events for mobile
+        const handleTouchStart = (e) => {
+            const isComparisonCard = card.closest('.cards-comparison');
+            if (isComparisonCard) return;
+            
+            card.classList.add('card-3d-hover');
+            
+            // Simulate mouse position from touch
+            const touch = e.touches[0];
+            const mockMouseEvent = {
+                clientX: touch.clientX,
+                clientY: touch.clientY
+            };
+            handleMouseMove(mockMouseEvent);
+        };
+        
+        const handleTouchMove = (e) => {
+            const isComparisonCard = card.closest('.cards-comparison');
+            if (isComparisonCard) return;
+            
+            e.preventDefault(); // Prevent scrolling
+            const touch = e.touches[0];
+            const mockMouseEvent = {
+                clientX: touch.clientX,
+                clientY: touch.clientY
+            };
+            handleMouseMove(mockMouseEvent);
+        };
+        
+        const handleTouchEnd = (e) => {
+            const isComparisonCard = card.closest('.cards-comparison');
+            if (isComparisonCard) return;
+            
+            setTimeout(() => {
+                handleMouseLeave(e);
+            }, 200);
+        };
+        
+        // Add event listeners
+        card.addEventListener('mousemove', handleMouseMove);
+        card.addEventListener('mouseenter', handleMouseEnter);
+        card.addEventListener('mouseleave', handleMouseLeave);
+        card.addEventListener('touchstart', handleTouchStart, { passive: false });
+        card.addEventListener('touchmove', handleTouchMove, { passive: false });
+        card.addEventListener('touchend', handleTouchEnd, { passive: true });
     }
 
     showLoading() {
@@ -251,6 +403,9 @@ class SuperTrunfoGameStatic {
         attributeRows.forEach(row => {
             row.classList.remove('selected');
         });
+        
+        // Reinitialize 3D effects for newly displayed card
+        this.setup3DCardEvents(this.currentCard);
     }
 
     selectAttribute(attribute) {
@@ -317,6 +472,8 @@ class SuperTrunfoGameStatic {
         
         this.cardSelection.classList.add('hidden');
         this.cardReveal.classList.remove('hidden');
+        
+        // Note: 3D effects are intentionally disabled for comparison cards per requirements
     }
 
     displayRevealCard(player, card) {
