@@ -173,16 +173,16 @@ class SuperTrunfoGameStatic {
             const mouseX = e.clientX - rect.left - cardWidth / 2;
             const mouseY = e.clientY - rect.top - cardHeight / 2;
             
-            // Calculate rotation angles (limit to ±20 degrees)
-            const rotateX = -(mouseY / cardHeight) * 20;
-            const rotateY = (mouseX / cardWidth) * 20;
+            // Calculate VERY SUBTLE rotation angles (limit to ±8 degrees max)
+            const rotateX = -(mouseY / cardHeight) * 8;
+            const rotateY = (mouseX / cardWidth) * 8;
             
             // Calculate shine position
             const shineX = (e.clientX - rect.left) / cardWidth * 100;
             const shineY = (e.clientY - rect.top) / cardHeight * 100;
             
-            // Apply 3D transform with perspective, preserving existing scale
-            // Use CSS variables for proper scaling
+            // Apply ULTRA-CONSERVATIVE effect that only changes lighting, NOT positioning
+            // NO rotation to preserve layout integrity - only shadow and shine effects
             let baseScale = '';
             if (card.closest('.cards-comparison')) {
                 baseScale = 'scale(var(--comparison-card-scale))';
@@ -190,22 +190,22 @@ class SuperTrunfoGameStatic {
                 baseScale = 'scale(var(--single-card-scale))';
             }
             
-            card.style.transform = `${baseScale} perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+            // ONLY maintain base transform - NO 3D rotation
+            card.style.transform = baseScale;
             
-            // Update shine overlay
+            // Add subtle dynamic shadow based on mouse position (no layout changes)
+            const shadowOffsetX = (mouseX / cardWidth) * 3;
+            const shadowOffsetY = (mouseY / cardHeight) * 3;
+            card.style.boxShadow = `${shadowOffsetX}px ${shadowOffsetY}px 25px rgba(0, 0, 0, 0.2), 0 8px 16px rgba(0, 0, 0, 0.1)`;
+            
+            // Update shine overlay with minimal effect
             if (shineOverlay) {
                 shineOverlay.style.background = `
                     radial-gradient(
                         circle at ${shineX}% ${shineY}%,
-                        rgba(255, 255, 255, 0.3) 0%,
-                        rgba(255, 255, 255, 0.1) 25%,
+                        rgba(255, 255, 255, 0.1) 0%,
+                        rgba(255, 255, 255, 0.03) 25%,
                         transparent 50%
-                    ),
-                    linear-gradient(
-                        ${45 + (mouseX / cardWidth) * 90}deg,
-                        transparent 30%,
-                        rgba(255, 255, 255, 0.1) 50%,
-                        transparent 70%
                     )
                 `;
             }
@@ -227,15 +227,19 @@ class SuperTrunfoGameStatic {
             
             card.classList.remove('card-3d-hover');
             
-            // Reset transforms while preserving scale
+            // Reset transforms while preserving scale - CRITICAL: maintain layout integrity
             let baseScale = '';
             if (card.closest('.cards-comparison')) {
                 baseScale = 'scale(var(--comparison-card-scale))';
             } else {
                 baseScale = 'scale(var(--single-card-scale))';
             }
+            // Reset to original scale-only transform
             card.style.transform = baseScale;
-            card.style.transition = 'transform 0.5s ease, box-shadow 0.3s ease';
+            card.style.transition = 'transform 0.3s ease, box-shadow 0.3s ease';
+            
+            // Reset box shadow to original
+            card.style.boxShadow = '';
             
             // Reset shine overlay
             if (shineOverlay) {
@@ -263,7 +267,7 @@ class SuperTrunfoGameStatic {
             const isComparisonCard = card.closest('.cards-comparison');
             if (isComparisonCard) return;
             
-            e.preventDefault(); // Prevent scrolling
+            // Don't prevent default to maintain touch scrolling and attribute clicking
             const touch = e.touches[0];
             const mockMouseEvent = {
                 clientX: touch.clientX,

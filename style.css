@@ -319,8 +319,7 @@ body {
   height: var(--card-base-height);
   
   /* Responsive scaling applied via transform */
-  transform: scale(var(--single-card-scale)) perspective(800px) 
-             rotateX(var(--holo-card-rotation-x)) rotateY(var(--holo-card-rotation-y));
+  transform: scale(var(--single-card-scale));
   transform-origin: center center;
   transform-style: preserve-3d;
   
@@ -328,7 +327,7 @@ body {
   background: var(--grad-card);
   border-radius: var(--radius-card);
   box-shadow: var(--shadow-card);
-  transition: transform 0.1s ease-out, box-shadow 0.3s ease;
+  transition: transform 0.2s ease-out, box-shadow 0.3s ease;
   border: 2px solid rgba(255, 255, 255, 0.1);
   overflow: hidden;
   backdrop-filter: blur(10px);
@@ -448,13 +447,38 @@ body {
   pointer-events: none;
 }
 
+/* 3D Hover Effect - Conservative approach */
+.card.card-3d-hover {
+  /* Apply subtle 3D effect that preserves layout */
+  transform-style: preserve-3d;
+  perspective: 1000px;
+}
+
+/* Enhanced shadow on hover */
+.card.card-3d-hover {
+  box-shadow: var(--shadow-hover);
+}
+
+/* Shine overlay for subtle lighting effects */
+.shine-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  z-index: 5;
+  border-radius: var(--radius-card);
+  opacity: 0.8;
+  transition: background 0.1s ease-out;
+}
+
 /* Comparison cards maintain holographic effects */
 .cards-comparison .card {
   /* Use base dimensions with comparison scaling */
   width: var(--card-base-width);
   height: var(--card-base-height);
-  transform: scale(var(--comparison-card-scale)) perspective(800px) 
-             rotateX(var(--holo-card-rotation-x)) rotateY(var(--holo-card-rotation-y));
+  transform: scale(var(--comparison-card-scale));
   transform-origin: center center;
 }
 
@@ -476,6 +500,9 @@ body {
   align-items: center;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   border: 1px solid rgba(255, 255, 255, 0.2);
+  /* Ensure header stays in place during 3D effects */
+  transform: translateZ(0);
+  backface-visibility: hidden;
 }
 
 .card-header h3 {
@@ -514,6 +541,9 @@ body {
   overflow: hidden;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
   border: 2px solid rgba(255, 255, 255, 0.1);
+  /* CRITICAL: Maintain image position during 3D effects */
+  transform: translateZ(0);
+  backface-visibility: hidden;
 }
 
 .card-image img {
@@ -539,6 +569,10 @@ body {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  /* CRITICAL: Maintain attributes position and ensure clickability */
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  pointer-events: auto;
 }
 
 .attribute-row {
@@ -556,10 +590,14 @@ body {
   position: relative;
   border: 2px solid transparent;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  /* CRITICAL: Ensure attributes remain clickable during 3D effects */
+  pointer-events: auto;
+  z-index: 10;
+  transform: translateZ(0);
 }
 
 .attribute-row:hover {
-  transform: translateX(4px);
+  transform: translateZ(0) translateX(4px);
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
   border-color: rgba(102, 126, 234, 0.3);
 }
@@ -569,7 +607,7 @@ body {
 }
 
 .attribute-row:active {
-  transform: translateX(2px);
+  transform: translateZ(0) translateX(2px);
   transition: var(--transition-quick);
 }
 
@@ -578,7 +616,7 @@ body {
   background: linear-gradient(135deg, var(--bg-warning) 0%, #f6ad55 100%);
   border-color: var(--stroke-warning);
   color: var(--text-warning);
-  transform: translateX(6px) scale(1.02);
+  transform: translateZ(0) translateX(6px) scale(1.02);
   box-shadow: 0 6px 20px rgba(237, 137, 54, 0.3);
 }
 
@@ -586,7 +624,7 @@ body {
   background: linear-gradient(135deg, var(--bg-success) 0%, #38a169 100%);
   border-color: var(--stroke-success);
   color: var(--text-success);
-  transform: translateX(6px) scale(1.02);
+  transform: translateZ(0) translateX(6px) scale(1.02);
   box-shadow: 0 6px 20px rgba(72, 187, 120, 0.3);
   animation: pulse-success 2s infinite;
 }
@@ -595,7 +633,7 @@ body {
   background: linear-gradient(135deg, var(--bg-error) 0%, #e53e3e 100%);
   border-color: var(--stroke-error);
   color: var(--text-error);
-  transform: translateX(-2px);
+  transform: translateZ(0) translateX(-2px);
   box-shadow: 0 4px 16px rgba(245, 101, 101, 0.3);
   opacity: 0.8;
 }

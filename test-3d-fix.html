@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste do Efeito 3D Corrigido</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Jockey+One&family=Inter:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+        .test-info {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: rgba(0,0,0,0.8);
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: monospace;
+            z-index: 1000;
+            max-width: 300px;
+        }
+        .test-info h3 {
+            margin: 0 0 10px 0;
+            color: #4CAF50;
+        }
+        .test-info ul {
+            margin: 10px 0;
+            padding-left: 20px;
+        }
+        .test-info li {
+            margin: 5px 0;
+            font-size: 12px;
+        }
+        .success {
+            color: #4CAF50;
+        }
+        .warning {
+            color: #ff9800;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-info">
+        <h3>✅ Teste de Correção 3D</h3>
+        <p><strong>Instruções:</strong></p>
+        <ul>
+            <li class="success">✓ Passe o mouse sobre o card</li>
+            <li class="success">✓ Clique nos atributos</li>
+            <li class="success">✓ Verifique se a imagem não se move</li>
+            <li class="warning">⚠ Atributos devem permanecer clicáveis</li>
+        </ul>
+        <p><strong>Efeitos esperados:</strong></p>
+        <ul>
+            <li>Sombra dinâmica sutil</li>
+            <li>Brilho suave no hover</li>
+            <li>SEM rotação do card</li>
+            <li>Layout SEMPRE preservado</li>
+        </ul>
+    </div>
+
+    <div class="card-container">
+        <div class="card" id="test-card">
+            <div class="shine-overlay"></div>
+            <div class="card-header">
+                <h3>Ferrari LaFerrari</h3>
+            </div>
+            <div class="card-image">
+                <img src="carros_imgs/Ferrari_LaFerrari.jpg" alt="Ferrari LaFerrari" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzUwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDM1MCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIzNTAiIGhlaWdodD0iMjAwIiBmaWxsPSIjZjBmMGYwIi8+Cjx0ZXh0IHg9IjE3NSIgeT0iMTAwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTYiIGZpbGw9IiM5OTkiIHRleHQtYW5jaG9yPSJtaWRkbGUiPkltYWdlbSBkbyBDYXJybzwvdGV4dD4KPC9zdmc+'">
+            </div>
+            <div class="card-attributes">
+                <div class="attribute-row" data-attr="maxSpeed" onclick="testAttributeClick('maxSpeed')">
+                    <span class="attr-name">Velocidade Máxima</span>
+                    <span class="attr-value">350 km/h</span>
+                </div>
+                <div class="attribute-row" data-attr="power" onclick="testAttributeClick('power')">
+                    <span class="attr-name">Potência</span>
+                    <span class="attr-value">950 HP</span>
+                </div>
+                <div class="attribute-row" data-attr="acceleration" onclick="testAttributeClick('acceleration')">
+                    <span class="attr-name">0-100 km/h</span>
+                    <span class="attr-value">2.4 s</span>
+                </div>
+                <div class="attribute-row" data-attr="displacement" onclick="testAttributeClick('displacement')">
+                    <span class="attr-name">Cilindrada</span>
+                    <span class="attr-value">6262 cc</span>
+                </div>
+                <div class="attribute-row" data-attr="weight" onclick="testAttributeClick('weight')">
+                    <span class="attr-name">Peso</span>
+                    <span class="attr-value">1365 kg</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Mini versão do sistema 3D para teste
+        class TestCard3D {
+            constructor() {
+                this.setup3DCardEvents(document.getElementById('test-card'));
+            }
+            
+            setup3DCardEvents(card) {
+                const shineOverlay = card.querySelector('.shine-overlay');
+                let isThrottled = false;
+                
+                const handleMouseMove = (e) => {
+                    if (isThrottled) return;
+                    isThrottled = true;
+                    requestAnimationFrame(() => {
+                        isThrottled = false;
+                    });
+                    
+                    const isComparisonCard = card.closest('.cards-comparison');
+                    if (isComparisonCard) return;
+                    
+                    const rect = card.getBoundingClientRect();
+                    const cardWidth = rect.width;
+                    const cardHeight = rect.height;
+                    
+                    const mouseX = e.clientX - rect.left - cardWidth / 2;
+                    const mouseY = e.clientY - rect.top - cardHeight / 2;
+                    
+                    const shineX = (e.clientX - rect.left) / cardWidth * 100;
+                    const shineY = (e.clientY - rect.top) / cardHeight * 100;
+                    
+                    let baseScale = 'scale(var(--single-card-scale))';
+                    card.style.transform = baseScale;
+                    
+                    const shadowOffsetX = (mouseX / cardWidth) * 3;
+                    const shadowOffsetY = (mouseY / cardHeight) * 3;
+                    card.style.boxShadow = `${shadowOffsetX}px ${shadowOffsetY}px 25px rgba(0, 0, 0, 0.2), 0 8px 16px rgba(0, 0, 0, 0.1)`;
+                    
+                    if (shineOverlay) {
+                        shineOverlay.style.background = `
+                            radial-gradient(
+                                circle at ${shineX}% ${shineY}%,
+                                rgba(255, 255, 255, 0.1) 0%,
+                                rgba(255, 255, 255, 0.03) 25%,
+                                transparent 50%
+                            )
+                        `;
+                    }
+                };
+                
+                const handleMouseEnter = (e) => {
+                    const isComparisonCard = card.closest('.cards-comparison');
+                    if (isComparisonCard) return;
+                    
+                    card.classList.add('card-3d-hover');
+                    card.style.transition = 'transform 0.2s ease-out, box-shadow 0.3s ease';
+                };
+                
+                const handleMouseLeave = (e) => {
+                    const isComparisonCard = card.closest('.cards-comparison');
+                    if (isComparisonCard) return;
+                    
+                    card.classList.remove('card-3d-hover');
+                    
+                    let baseScale = 'scale(var(--single-card-scale))';
+                    card.style.transform = baseScale;
+                    card.style.transition = 'transform 0.3s ease, box-shadow 0.3s ease';
+                    card.style.boxShadow = '';
+                    
+                    if (shineOverlay) {
+                        shineOverlay.style.background = '';
+                    }
+                };
+                
+                card.addEventListener('mousemove', handleMouseMove);
+                card.addEventListener('mouseenter', handleMouseEnter);
+                card.addEventListener('mouseleave', handleMouseLeave);
+            }
+        }
+
+        function testAttributeClick(attribute) {
+            alert(`✅ SUCESSO! Atributo "${attribute}" foi clicado corretamente!\n\nIsso confirma que o efeito 3D não interfere com a funcionalidade dos atributos.`);
+            
+            // Destaque visual para mostrar que o clique funcionou
+            const row = document.querySelector(`[data-attr="${attribute}"]`);
+            row.classList.add('selected');
+            setTimeout(() => {
+                row.classList.remove('selected');
+            }, 2000);
+        }
+
+        // Inicializar teste quando a página carregar
+        document.addEventListener('DOMContentLoaded', () => {
+            new TestCard3D();
+            console.log('✅ Teste do efeito 3D corrigido iniciado!');
+        });
+    </script>
+</body>
+</html>
