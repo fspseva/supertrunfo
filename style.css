@@ -48,7 +48,8 @@
   /* Available space calculations */
   --header-height: 100px;
   --ui-spacing: 80px; /* Instructions + padding */
-  --available-height: calc(100vh - var(--header-height) - var(--ui-spacing));
+  --mobile-browser-ui: 0px; /* Account for mobile browser UI */
+  --available-height: calc(100vh - var(--header-height) - var(--ui-spacing) - var(--mobile-browser-ui));
   --available-width: 100vw;
   
   /* Single card scaling - uniform scale to fit viewport */
@@ -240,7 +241,7 @@ body {
 .game-header {
     background: rgba(255, 255, 255, 0.95);
     backdrop-filter: blur(20px);
-    padding: clamp(15px, 3vh, 25px) clamp(15px, 4vw, 30px);
+    padding: clamp(12px, 2.5vh, 20px) clamp(15px, 4vw, 30px); /* Reduced padding for mobile */
     border-bottom: 1px solid rgba(102, 126, 234, 0.2);
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     position: relative;
@@ -761,13 +762,14 @@ body {
 
 @media (max-width: 768px) {
     :root {
-        /* Mobile scaling adjustments */
-        --ui-spacing: 100px;
+        /* Mobile scaling adjustments - reduced UI spacing for better card positioning */
+        --ui-spacing: 60px; /* Reduced from 100px to 60px for better vertical space usage */
+        --mobile-browser-ui: 20px; /* Account for mobile browser UI (address bar, etc.) */
         --single-scale-by-height: calc(var(--available-height) / var(--card-base-height));
         --single-scale-by-width: calc((100vw - 20px) / var(--card-base-width));
         --single-card-scale: min(var(--single-scale-by-height), var(--single-scale-by-width), 0.9);
         
-        --comparison-available-height: calc(100vh - var(--header-height) - 140px);
+        --comparison-available-height: calc(100vh - var(--header-height) - 120px - var(--mobile-browser-ui)); /* Account for mobile UI */
         --comparison-available-width: calc(100vw - 40px);
         --comparison-scale-by-width: calc(var(--comparison-available-width) / var(--card-base-width));
         --comparison-scale-by-height: calc(var(--comparison-available-height) / var(--card-base-height));
@@ -805,14 +807,24 @@ body {
     }
     
     .game-content {
-        padding: 25px 15px;
+        padding: 15px 15px 25px 15px; /* Reduced top padding for better card positioning */
+    }
+    
+    .card-container {
+        margin-bottom: clamp(10px, 2vh, 15px); /* Reduced bottom margin on mobile */
+    }
+    
+    .instructions {
+        margin-bottom: clamp(10px, 2vh, 15px); /* Reduced instruction margin on mobile */
+        padding: clamp(8px, 1.5vh, 15px); /* Reduced instruction padding on mobile */
     }
 }
 
 @media (max-width: 480px) {
     :root {
-        /* Extra small mobile scaling */
-        --ui-spacing: 80px;
+        /* Extra small mobile scaling - optimized for very small screens */
+        --ui-spacing: 50px; /* Further reduced from 80px to 50px */
+        --mobile-browser-ui: 30px; /* More aggressive mobile browser UI compensation */
         --single-scale-by-width: calc((100vw - 10px) / var(--card-base-width));
         --single-card-scale: min(var(--single-scale-by-height), var(--single-scale-by-width), 0.8);
         
@@ -826,7 +838,7 @@ body {
     }
     
     .game-header {
-        padding: 12px 15px;
+        padding: 10px 15px; /* Further reduced padding for extra small screens */
     }
 }
 
