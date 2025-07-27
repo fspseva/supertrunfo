@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste do Efeito 3D Completo</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Jockey+One&family=Inter:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            gap: 40px;
+        }
+        .test-info {
+            background: rgba(0,0,0,0.8);
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            font-family: monospace;
+            max-width: 600px;
+            text-align: center;
+        }
+        .test-info h3 {
+            margin: 0 0 15px 0;
+            color: #4CAF50;
+            font-size: 1.5rem;
+        }
+        .test-info ul {
+            margin: 15px 0;
+            padding-left: 20px;
+            text-align: left;
+        }
+        .test-info li {
+            margin: 8px 0;
+            font-size: 14px;
+        }
+        .success {
+            color: #4CAF50;
+        }
+        .warning {
+            color: #ff9800;
+        }
+        .test-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+        .test-section h4 {
+            color: white;
+            font-size: 1.2rem;
+            margin: 0;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+        .comparison-test {
+            display: flex;
+            gap: 40px;
+            align-items: center;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .vs-text {
+            font-size: 2rem;
+            font-weight: bold;
+            color: white;
+            text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.5);
+            font-family: var(--font-title);
+        }
+    </style>
+</head>
+<body>
+    <div class="test-info">
+        <h3>✨ Teste do Efeito 3D Completo</h3>
+        <p><strong>Novos recursos implementados:</strong></p>
+        <ul>
+            <li class="success">✓ Rotação 3D real do card inteiro (±15°)</li>
+            <li class="success">✓ Efeito holográfico que segue o mouse</li>
+            <li class="success">✓ Sombra dinâmica com profundidade</li>
+            <li class="success">✓ Funciona em cards individuais E de comparação</li>
+            <li class="success">✓ Suporte completo para mobile/touch</li>
+            <li class="warning">⚠ Atributos permanecem clicáveis durante o efeito</li>
+        </ul>
+        <p><strong>Teste:</strong> Passe o mouse sobre os cards abaixo!</p>
+    </div>
+
+    <div class="test-section">
+        <h4>Card Individual (Seleção do Jogador)</h4>
+        <div class="card-container">
+            <div class="card" id="test-card-single">
+                <div class="shine-overlay"></div>
+                <div class="card-header">
+                    <h3>Ferrari LaFerrari</h3>
+                </div>
+                <div class="card-image">
+                    <img src="carros_imgs/Ferrari_LaFerrari.jpg" alt="Ferrari LaFerrari" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzUwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDM1MCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIzNTAiIGhlaWdodD0iMjAwIiBmaWxsPSIjZjBmMGYwIi8+Cjx0ZXh0IHg9IjE3NSIgeT0iMTAwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTYiIGZpbGw9IiM5OTkiIHRleHQtYW5jaG9yPSJtaWRkbGUiPkltYWdlbSBkbyBDYXJybzwvdGV4dD4KPC9zdmc+'">
+                </div>
+                <div class="card-attributes">
+                    <div class="attribute-row" data-attr="maxSpeed" onclick="testAttributeClick('maxSpeed', 'single')">
+                        <span class="attr-name">Velocidade Máxima</span>
+                        <span class="attr-value">350 km/h</span>
+                    </div>
+                    <div class="attribute-row" data-attr="power" onclick="testAttributeClick('power', 'single')">
+                        <span class="attr-name">Potência</span>
+                        <span class="attr-value">950 HP</span>
+                    </div>
+                    <div class="attribute-row" data-attr="acceleration" onclick="testAttributeClick('acceleration', 'single')">
+                        <span class="attr-name">0-100 km/h</span>
+                        <span class="attr-value">2.4 s</span>
+                    </div>
+                    <div class="attribute-row" data-attr="displacement" onclick="testAttributeClick('displacement', 'single')">
+                        <span class="attr-name">Cilindrada</span>
+                        <span class="attr-value">6262 cc</span>
+                    </div>
+                    <div class="attribute-row" data-attr="weight" onclick="testAttributeClick('weight', 'single')">
+                        <span class="attr-name">Peso</span>
+                        <span class="attr-value">1365 kg</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h4>Cards de Comparação (Resultado da Rodada)</h4>
+        <div class="cards-comparison">
+            <div class="card-with-label">
+                <div class="player-label">Jogador 1</div>
+                <div class="card" id="test-card-a">
+                    <div class="shine-overlay"></div>
+                    <div class="card-header">
+                        <h3>Ferrari LaFerrari</h3>
+                    </div>
+                    <div class="card-image">
+                        <img src="carros_imgs/Ferrari_LaFerrari.jpg" alt="Ferrari LaFerrari" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzUwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDM1MCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIzNTAiIGhlaWdodD0iMjAwIiBmaWxsPSIjZjBmMGYwIi8+Cjx0ZXh0IHg9IjE3NSIgeT0iMTAwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTYiIGZpbGw9IiM5OTkiIHRleHQtYW5jaG9yPSJtaWRkbGUiPkltYWdlbSBkbyBDYXJybzwvdGV4dD4KPC9zdmc+'">
+                    </div>
+                    <div class="card-attributes">
+                        <div class="attribute-row winner" data-attr="maxSpeed">
+                            <span class="attr-name">Velocidade Máxima</span>
+                            <span class="attr-value">350 km/h</span>
+                        </div>
+                        <div class="attribute-row" data-attr="power">
+                            <span class="attr-name">Potência</span>
+                            <span class="attr-value">950 HP</span>
+                        </div>
+                        <div class="attribute-row" data-attr="acceleration">
+                            <span class="attr-name">0-100 km/h</span>
+                            <span class="attr-value">2.4 s</span>
+                        </div>
+                        <div class="attribute-row" data-attr="displacement">
+                            <span class="attr-name">Cilindrada</span>
+                            <span class="attr-value">6262 cc</span>
+                        </div>
+                        <div class="attribute-row" data-attr="weight">
+                            <span class="attr-name">Peso</span>
+                            <span class="attr-value">1365 kg</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="vs-section">
+                <div class="vs-text">VS</div>
+            </div>
+
+            <div class="card-with-label">
+                <div class="player-label">Jogador 2</div>
+                <div class="card" id="test-card-b">
+                    <div class="shine-overlay"></div>
+                    <div class="card-header">
+                        <h3>Lamborghini Revuelto</h3>
+                    </div>
+                    <div class="card-image">
+                        <img src="carros_imgs/Lamborghini_Revuelto.jpg" alt="Lamborghini Revuelto" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzUwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDM1MCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIzNTAiIGhlaWdodD0iMjAwIiBmaWxsPSIjZjBmMGYwIi8+Cjx0ZXh0IHg9IjE3NSIgeT0iMTAwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTYiIGZpbGw9IiM5OTkiIHRleHQtYW5jaG9yPSJtaWRkbGUiPkltYWdlbSBkbyBDYXJybzwvdGV4dD4KPC9zdmc+'">
+                    </div>
+                    <div class="card-attributes">
+                        <div class="attribute-row loser" data-attr="maxSpeed">
+                            <span class="attr-name">Velocidade Máxima</span>
+                            <span class="attr-value">340 km/h</span>
+                        </div>
+                        <div class="attribute-row" data-attr="power">
+                            <span class="attr-name">Potência</span>
+                            <span class="attr-value">1001 HP</span>
+                        </div>
+                        <div class="attribute-row" data-attr="acceleration">
+                            <span class="attr-name">0-100 km/h</span>
+                            <span class="attr-value">2.5 s</span>
+                        </div>
+                        <div class="attribute-row" data-attr="displacement">
+                            <span class="attr-name">Cilindrada</span>
+                            <span class="attr-value">6498 cc</span>
+                        </div>
+                        <div class="attribute-row" data-attr="weight">
+                            <span class="attr-name">Peso</span>
+                            <span class="attr-value">1772 kg</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Sistema 3D completo para teste
+        class Test3DCardSystem {
+            constructor() {
+                this.setup3DCardEvents(document.getElementById('test-card-single'));
+                this.setup3DCardEvents(document.getElementById('test-card-a'));
+                this.setup3DCardEvents(document.getElementById('test-card-b'));
+            }
+            
+            setup3DCardEvents(card) {
+                const shineOverlay = card.querySelector('.shine-overlay');
+                let isThrottled = false;
+                
+                const handleMouseMove = (e) => {
+                    // Throttle mouse movement for performance
+                    if (isThrottled) return;
+                    isThrottled = true;
+                    requestAnimationFrame(() => {
+                        isThrottled = false;
+                    });
+                    
+                    const rect = card.getBoundingClientRect();
+                    const cardWidth = rect.width;
+                    const cardHeight = rect.height;
+                    
+                    // Get mouse position relative to card center
+                    const mouseX = e.clientX - rect.left - cardWidth / 2;
+                    const mouseY = e.clientY - rect.top - cardHeight / 2;
+                    
+                    // Calculate rotation angles (limit to ±15 degrees max for natural movement)
+                    const rotateX = -(mouseY / cardHeight) * 15;
+                    const rotateY = (mouseX / cardWidth) * 15;
+                    
+                    // Calculate holographic effect positions
+                    const pointerX = ((e.clientX - rect.left) / cardWidth) * 100;
+                    const pointerY = ((e.clientY - rect.top) / cardHeight) * 100;
+                    const angle = Math.atan2(mouseY, mouseX) * (180 / Math.PI);
+                    
+                    // Apply 3D rotation and scaling based on card type
+                    const isComparisonCard = card.closest('.cards-comparison');
+                    let baseScale = isComparisonCard ? 'var(--comparison-card-scale)' : 'var(--single-card-scale)';
+                    
+                    // Apply the full 3D transform with proper scaling
+                    card.style.transform = `
+                        scale(${baseScale})
+                        perspective(var(--card-perspective))
+                        rotateX(${rotateX}deg)
+                        rotateY(${rotateY}deg)
+                    `;
+                    
+                    // Update CSS custom properties for holographic effects
+                    card.style.setProperty('--card-rotation-x', `${rotateX}deg`);
+                    card.style.setProperty('--card-rotation-y', `${rotateY}deg`);
+                    card.style.setProperty('--holo-pointer-x', `${pointerX}%`);
+                    card.style.setProperty('--holo-pointer-y', `${pointerY}%`);
+                    card.style.setProperty('--holo-glare-angle', `${angle}`);
+                    card.style.setProperty('--holo-rainbow-opacity', '0.6');
+                    card.style.setProperty('--holo-foil-opacity', '0.4');
+                    card.style.setProperty('--holo-glare-opacity', '0.3');
+                    card.style.setProperty('--holo-background-animation', 'running');
+                    
+                    // Enhanced dynamic shadow for depth perception
+                    const shadowOffsetX = (mouseX / cardWidth) * 8;
+                    const shadowOffsetY = (mouseY / cardHeight) * 8;
+                    const shadowBlur = 30 + Math.abs(rotateX) + Math.abs(rotateY);
+                    card.style.boxShadow = `
+                        ${shadowOffsetX}px ${shadowOffsetY}px ${shadowBlur}px rgba(0, 0, 0, 0.3),
+                        0 15px 35px rgba(0, 0, 0, 0.15)
+                    `;
+                    
+                    // Update shine overlay with dynamic gradient
+                    if (shineOverlay) {
+                        shineOverlay.style.background = `
+                            radial-gradient(
+                                circle at ${pointerX}% ${pointerY}%,
+                                rgba(255, 255, 255, 0.25) 0%,
+                                rgba(255, 255, 255, 0.1) 25%,
+                                rgba(255, 255, 255, 0.05) 50%,
+                                transparent 70%
+                            ),
+                            linear-gradient(
+                                ${angle}deg,
+                                transparent 30%,
+                                rgba(255, 255, 255, 0.2) 50%,
+                                transparent 70%
+                            )
+                        `;
+                    }
+                };
+                
+                const handleMouseEnter = (e) => {
+                    card.classList.add('card-3d-hover');
+                    card.style.transition = 'transform 0.1s ease-out, box-shadow 0.3s ease';
+                    
+                    // Enable holographic effects
+                    card.style.setProperty('--holo-background-animation', 'running');
+                };
+                
+                const handleMouseLeave = (e) => {
+                    card.classList.remove('card-3d-hover');
+                    
+                    // Reset to neutral position with smooth transition
+                    const isComparisonCard = card.closest('.cards-comparison');
+                    let baseScale = isComparisonCard ? 'var(--comparison-card-scale)' : 'var(--single-card-scale)';
+                    
+                    card.style.transform = `
+                        scale(${baseScale})
+                        perspective(var(--card-perspective))
+                        rotateX(0deg)
+                        rotateY(0deg)
+                    `;
+                    card.style.transition = 'transform 0.3s ease, box-shadow 0.3s ease';
+                    
+                    // Reset CSS custom properties
+                    card.style.setProperty('--card-rotation-x', '0deg');
+                    card.style.setProperty('--card-rotation-y', '0deg');
+                    card.style.setProperty('--holo-pointer-x', '50%');
+                    card.style.setProperty('--holo-pointer-y', '50%');
+                    card.style.setProperty('--holo-glare-angle', '0deg');
+                    card.style.setProperty('--holo-rainbow-opacity', '0');
+                    card.style.setProperty('--holo-foil-opacity', '0');
+                    card.style.setProperty('--holo-glare-opacity', '0');
+                    card.style.setProperty('--holo-background-animation', 'paused');
+                    
+                    // Reset box shadow
+                    card.style.boxShadow = '';
+                    
+                    // Reset shine overlay
+                    if (shineOverlay) {
+                        shineOverlay.style.background = '';
+                    }
+                };
+                
+                // Touch events for mobile
+                const handleTouchStart = (e) => {
+                    card.classList.add('card-3d-hover');
+                    
+                    // Simulate mouse position from touch
+                    const touch = e.touches[0];
+                    const mockMouseEvent = {
+                        clientX: touch.clientX,
+                        clientY: touch.clientY
+                    };
+                    handleMouseMove(mockMouseEvent);
+                };
+                
+                const handleTouchMove = (e) => {
+                    // Don't prevent default to maintain touch scrolling and attribute clicking
+                    const touch = e.touches[0];
+                    const mockMouseEvent = {
+                        clientX: touch.clientX,
+                        clientY: touch.clientY
+                    };
+                    handleMouseMove(mockMouseEvent);
+                };
+                
+                const handleTouchEnd = (e) => {
+                    setTimeout(() => {
+                        handleMouseLeave(e);
+                    }, 200);
+                };
+                
+                // Add event listeners
+                card.addEventListener('mousemove', handleMouseMove);
+                card.addEventListener('mouseenter', handleMouseEnter);
+                card.addEventListener('mouseleave', handleMouseLeave);
+                card.addEventListener('touchstart', handleTouchStart, { passive: false });
+                card.addEventListener('touchmove', handleTouchMove, { passive: false });
+                card.addEventListener('touchend', handleTouchEnd, { passive: true });
+            }
+        }
+
+        function testAttributeClick(attribute, cardType) {
+            alert(`✅ SUCESSO! Atributo "${attribute}" foi clicado no card ${cardType}!\n\nO efeito 3D NÃO interfere com a funcionalidade dos atributos.`);
+            
+            // Destaque visual para mostrar que o clique funcionou
+            const row = document.querySelector(`#test-card-${cardType === 'single' ? 'single' : 'a'} [data-attr="${attribute}"]`);
+            if (row) {
+                row.classList.add('selected');
+                setTimeout(() => {
+                    row.classList.remove('selected');
+                }, 2000);
+            }
+        }
+
+        // Inicializar teste quando a página carregar
+        document.addEventListener('DOMContentLoaded', () => {
+            new Test3DCardSystem();
+            console.log('✅ Sistema de teste 3D completo iniciado!');
+            console.log('🎮 Passe o mouse sobre os cards para ver o efeito 3D!');
+            console.log('📱 Funciona também em dispositivos touch!');
+        });
+    </script>
+</body>
+</html>

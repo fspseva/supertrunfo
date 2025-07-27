@@ -81,6 +81,12 @@
   --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   --transition-quick: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   
+  /* 3D Card Effect Variables */
+  --card-rotation-x: 0deg;
+  --card-rotation-y: 0deg;
+  --card-perspective: 1000px;
+  --card-max-rotation: 15deg;
+  
   /* Holographic Card Effect Variables */
   --holo-pointer-x: 50%;
   --holo-pointer-y: 50%;
@@ -311,6 +317,9 @@ body {
   justify-content: center;
   margin-bottom: clamp(15px, 4vh, 25px);
   width: 100%;
+  /* Add perspective for 3D effect */
+  perspective: var(--card-perspective);
+  perspective-origin: center center;
 }
 
 .card {
@@ -318,7 +327,7 @@ body {
   width: var(--card-base-width);
   height: var(--card-base-height);
   
-  /* Responsive scaling applied via transform */
+  /* Responsive scaling applied via transform - 3D rotation handled by hover state */
   transform: scale(var(--single-card-scale));
   transform-origin: center center;
   transform-style: preserve-3d;
@@ -327,7 +336,7 @@ body {
   background: var(--grad-card);
   border-radius: var(--radius-card);
   box-shadow: var(--shadow-card);
-  transition: transform 0.2s ease-out, box-shadow 0.3s ease;
+  transition: transform 0.1s ease-out, box-shadow 0.3s ease;
   border: 2px solid rgba(255, 255, 255, 0.1);
   overflow: hidden;
   backdrop-filter: blur(10px);
@@ -335,7 +344,7 @@ body {
   will-change: transform, box-shadow;
 }
 
-/* Holographic Rainbow Background */
+/* Enhanced Holographic Rainbow Background */
 .card::before {
   content: '';
   position: absolute;
@@ -343,31 +352,41 @@ body {
   left: 0;
   right: 0;
   bottom: 0;
-  background: conic-gradient(
-    from calc(var(--holo-glare-angle) * 1deg) at var(--holo-pointer-x) var(--holo-pointer-y),
-    hsl(0, 100%, 50%) 0deg,
-    hsl(60, 100%, 50%) 60deg,
-    hsl(120, 100%, 50%) 120deg,
-    hsl(180, 100%, 50%) 180deg,
-    hsl(240, 100%, 50%) 240deg,
-    hsl(300, 100%, 50%) 300deg,
-    hsl(360, 100%, 50%) 360deg
-  ), 
-  radial-gradient(
-    circle at var(--holo-pointer-x) var(--holo-pointer-y),
-    transparent 20%,
-    rgba(255, 255, 255, 0.3) 40%,
-    rgba(255, 255, 255, 0.1) 80%
-  );
-  background-size: var(--holo-background-size), 200% 200%;
-  background-position: var(--holo-background-position-x) var(--holo-background-position-y);
+  background: 
+    conic-gradient(
+      from calc(var(--holo-glare-angle) * 1deg) at var(--holo-pointer-x) var(--holo-pointer-y),
+      hsl(0, 100%, 50%) 0deg,
+      hsl(60, 100%, 50%) 60deg,
+      hsl(120, 100%, 50%) 120deg,
+      hsl(180, 100%, 50%) 180deg,
+      hsl(240, 100%, 50%) 240deg,
+      hsl(300, 100%, 50%) 300deg,
+      hsl(360, 100%, 50%) 360deg
+    ), 
+    radial-gradient(
+      circle at var(--holo-pointer-x) var(--holo-pointer-y),
+      rgba(255, 255, 255, 0.4) 0%,
+      rgba(255, 255, 255, 0.2) 30%,
+      transparent 70%
+    ),
+    linear-gradient(
+      calc(var(--holo-glare-angle) * 1deg),
+      transparent 30%,
+      rgba(255, 255, 255, 0.3) 50%,
+      transparent 70%
+    );
+  background-size: var(--holo-background-size), 300% 300%, 200% 200%;
+  background-position: 
+    var(--holo-background-position-x) var(--holo-background-position-y),
+    var(--holo-pointer-x) var(--holo-pointer-y),
+    var(--holo-pointer-x) var(--holo-pointer-y);
   opacity: var(--holo-rainbow-opacity);
   mix-blend-mode: color-dodge;
   pointer-events: none;
   z-index: 1;
   border-radius: var(--radius-card);
-  filter: saturate(var(--holo-rainbow-saturation)) brightness(1.3);
-  animation: holo-rainbow-shift 3s ease-in-out infinite var(--holo-background-animation);
+  filter: saturate(var(--holo-rainbow-saturation)) brightness(1.5);
+  animation: holo-rainbow-shift 4s ease-in-out infinite var(--holo-background-animation);
 }
 
 /* Foil Effect Layer */
@@ -447,10 +466,31 @@ body {
   pointer-events: none;
 }
 
-/* 3D Hover Effect - Conservative approach */
+/* 3D Hover Effect - Proper 3D rotation */
+.card {
+  /* CSS variables for 3D rotation */
+  --rotate-x: 0deg;
+  --rotate-y: 0deg;
+  --scale: 1;
+}
+
 .card.card-3d-hover {
-  /* Apply subtle 3D effect that preserves layout */
+  /* Apply 3D effect that preserves layout */
   transform-style: preserve-3d;
+  /* Apply scaling and 3D rotation based on CSS variables */
+  transform: perspective(1000px) 
+             rotateX(var(--rotate-x)) 
+             rotateY(var(--rotate-y)) 
+             scale(var(--scale));
+  transition: transform 0.1s ease-out;
+}
+
+/* Ensure comparison cards also get 3D effect */
+.cards-comparison .card.card-3d-hover {
+  transform: perspective(1000px) 
+             rotateX(var(--rotate-x)) 
+             rotateY(var(--rotate-y)) 
+             scale(var(--comparison-card-scale));
 }
 
 /* Enhanced shadow on hover */
@@ -472,9 +512,9 @@ body {
   transition: background 0.1s ease-out;
 }
 
-/* Comparison cards maintain holographic effects */
+/* Comparison cards maintain holographic effects and 3D rotation */
 .cards-comparison .card {
-  /* Use base dimensions with comparison scaling */
+  /* Use base dimensions with comparison scaling and 3D rotation */
   width: var(--card-base-width);
   height: var(--card-base-height);
   transform: scale(var(--comparison-card-scale));
@@ -725,6 +765,9 @@ body {
     max-width: 1200px;
     margin-left: auto;
     margin-right: auto;
+    /* Add perspective for comparison cards 3D effect */
+    perspective: var(--card-perspective);
+    perspective-origin: center center;
 }
 
 .card-with-label {

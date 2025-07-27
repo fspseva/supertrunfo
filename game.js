@@ -142,7 +142,7 @@ class SuperTrunfoGameStatic {
     }
     
     init3DCardEffects() {
-        // Get all cards
+        // Get all cards and set up 3D effects for both single and comparison cards
         const cards = document.querySelectorAll('.card');
         
         cards.forEach(card => {
@@ -161,9 +161,6 @@ class SuperTrunfoGameStatic {
             requestAnimationFrame(() => {
                 isThrottled = false;
             });
-            // Only apply effect to individual cards, not comparison cards
-            const isComparisonCard = card.closest('.cards-comparison');
-            if (isComparisonCard) return;
             
             const rect = card.getBoundingClientRect();
             const cardWidth = rect.width;
@@ -173,72 +170,97 @@ class SuperTrunfoGameStatic {
             const mouseX = e.clientX - rect.left - cardWidth / 2;
             const mouseY = e.clientY - rect.top - cardHeight / 2;
             
-            // Calculate VERY SUBTLE rotation angles (limit to ±8 degrees max)
-            const rotateX = -(mouseY / cardHeight) * 8;
-            const rotateY = (mouseX / cardWidth) * 8;
+            // Calculate rotation angles (limit to ±15 degrees max for natural movement)
+            const rotateX = -(mouseY / cardHeight) * 15;
+            const rotateY = (mouseX / cardWidth) * 15;
             
-            // Calculate shine position
-            const shineX = (e.clientX - rect.left) / cardWidth * 100;
-            const shineY = (e.clientY - rect.top) / cardHeight * 100;
+            // Calculate holographic effect positions
+            const pointerX = ((e.clientX - rect.left) / cardWidth) * 100;
+            const pointerY = ((e.clientY - rect.top) / cardHeight) * 100;
+            const angle = Math.atan2(mouseY, mouseX) * (180 / Math.PI);
             
-            // Apply ULTRA-CONSERVATIVE effect that only changes lighting, NOT positioning
-            // NO rotation to preserve layout integrity - only shadow and shine effects
-            let baseScale = '';
-            if (card.closest('.cards-comparison')) {
-                baseScale = 'scale(var(--comparison-card-scale))';
-            } else {
-                baseScale = 'scale(var(--single-card-scale))';
-            }
+            // Apply 3D rotation using CSS custom properties
+            const isComparisonCard = card.closest('.cards-comparison');
+            let baseScale = isComparisonCard ? 'var(--comparison-card-scale)' : 'var(--single-card-scale)';
             
-            // ONLY maintain base transform - NO 3D rotation
-            card.style.transform = baseScale;
+            // Update CSS custom properties for 3D rotation
+            card.style.setProperty('--rotate-x', `${rotateX}deg`);
+            card.style.setProperty('--rotate-y', `${rotateY}deg`);
+            card.style.setProperty('--scale', baseScale);
             
-            // Add subtle dynamic shadow based on mouse position (no layout changes)
-            const shadowOffsetX = (mouseX / cardWidth) * 3;
-            const shadowOffsetY = (mouseY / cardHeight) * 3;
-            card.style.boxShadow = `${shadowOffsetX}px ${shadowOffsetY}px 25px rgba(0, 0, 0, 0.2), 0 8px 16px rgba(0, 0, 0, 0.1)`;
+            // Update CSS custom properties for holographic effects
+            card.style.setProperty('--card-rotation-x', `${rotateX}deg`);
+            card.style.setProperty('--card-rotation-y', `${rotateY}deg`);
+            card.style.setProperty('--holo-pointer-x', `${pointerX}%`);
+            card.style.setProperty('--holo-pointer-y', `${pointerY}%`);
+            card.style.setProperty('--holo-glare-angle', `${angle}`);
+            card.style.setProperty('--holo-rainbow-opacity', '0.6');
+            card.style.setProperty('--holo-foil-opacity', '0.4');
+            card.style.setProperty('--holo-glare-opacity', '0.3');
+            card.style.setProperty('--holo-background-animation', 'running');
             
-            // Update shine overlay with minimal effect
+            // Enhanced dynamic shadow for depth perception
+            const shadowOffsetX = (mouseX / cardWidth) * 8;
+            const shadowOffsetY = (mouseY / cardHeight) * 8;
+            const shadowBlur = 30 + Math.abs(rotateX) + Math.abs(rotateY);
+            card.style.boxShadow = `
+                ${shadowOffsetX}px ${shadowOffsetY}px ${shadowBlur}px rgba(0, 0, 0, 0.3),
+                0 15px 35px rgba(0, 0, 0, 0.15)
+            `;
+            
+            // Update shine overlay with dynamic gradient
             if (shineOverlay) {
                 shineOverlay.style.background = `
                     radial-gradient(
-                        circle at ${shineX}% ${shineY}%,
-                        rgba(255, 255, 255, 0.1) 0%,
-                        rgba(255, 255, 255, 0.03) 25%,
-                        transparent 50%
+                        circle at ${pointerX}% ${pointerY}%,
+                        rgba(255, 255, 255, 0.25) 0%,
+                        rgba(255, 255, 255, 0.1) 25%,
+                        rgba(255, 255, 255, 0.05) 50%,
+                        transparent 70%
+                    ),
+                    linear-gradient(
+                        ${angle}deg,
+                        transparent 30%,
+                        rgba(255, 255, 255, 0.2) 50%,
+                        transparent 70%
                     )
                 `;
             }
         };
         
         const handleMouseEnter = (e) => {
-            // Only apply effect to individual cards, not comparison cards
-            const isComparisonCard = card.closest('.cards-comparison');
-            if (isComparisonCard) return;
-            
             card.classList.add('card-3d-hover');
             card.style.transition = 'transform 0.1s ease-out, box-shadow 0.3s ease';
+            
+            // Enable holographic effects
+            card.style.setProperty('--holo-background-animation', 'running');
         };
         
         const handleMouseLeave = (e) => {
-            // Only apply effect to individual cards, not comparison cards
-            const isComparisonCard = card.closest('.cards-comparison');
-            if (isComparisonCard) return;
-            
             card.classList.remove('card-3d-hover');
             
-            // Reset transforms while preserving scale - CRITICAL: maintain layout integrity
-            let baseScale = '';
-            if (card.closest('.cards-comparison')) {
-                baseScale = 'scale(var(--comparison-card-scale))';
-            } else {
-                baseScale = 'scale(var(--single-card-scale))';
-            }
-            // Reset to original scale-only transform
-            card.style.transform = baseScale;
+            // Reset to neutral position with smooth transition
+            const isComparisonCard = card.closest('.cards-comparison');
+            let baseScale = isComparisonCard ? 'var(--comparison-card-scale)' : 'var(--single-card-scale)';
+            
+            // Reset CSS custom properties for 3D rotation
+            card.style.setProperty('--rotate-x', '0deg');
+            card.style.setProperty('--rotate-y', '0deg');
+            card.style.setProperty('--scale', baseScale);
             card.style.transition = 'transform 0.3s ease, box-shadow 0.3s ease';
             
-            // Reset box shadow to original
+            // Reset CSS custom properties
+            card.style.setProperty('--card-rotation-x', '0deg');
+            card.style.setProperty('--card-rotation-y', '0deg');
+            card.style.setProperty('--holo-pointer-x', '50%');
+            card.style.setProperty('--holo-pointer-y', '50%');
+            card.style.setProperty('--holo-glare-angle', '0deg');
+            card.style.setProperty('--holo-rainbow-opacity', '0');
+            card.style.setProperty('--holo-foil-opacity', '0');
+            card.style.setProperty('--holo-glare-opacity', '0');
+            card.style.setProperty('--holo-background-animation', 'paused');
+            
+            // Reset box shadow
             card.style.boxShadow = '';
             
             // Reset shine overlay
@@ -249,9 +271,6 @@ class SuperTrunfoGameStatic {
         
         // Touch events for mobile
         const handleTouchStart = (e) => {
-            const isComparisonCard = card.closest('.cards-comparison');
-            if (isComparisonCard) return;
-            
             card.classList.add('card-3d-hover');
             
             // Simulate mouse position from touch
@@ -264,9 +283,6 @@ class SuperTrunfoGameStatic {
         };
         
         const handleTouchMove = (e) => {
-            const isComparisonCard = card.closest('.cards-comparison');
-            if (isComparisonCard) return;
-            
             // Don't prevent default to maintain touch scrolling and attribute clicking
             const touch = e.touches[0];
             const mockMouseEvent = {
@@ -277,9 +293,6 @@ class SuperTrunfoGameStatic {
         };
         
         const handleTouchEnd = (e) => {
-            const isComparisonCard = card.closest('.cards-comparison');
-            if (isComparisonCard) return;
-            
             setTimeout(() => {
                 handleMouseLeave(e);
             }, 200);
@@ -477,7 +490,11 @@ class SuperTrunfoGameStatic {
         this.cardSelection.classList.add('hidden');
         this.cardReveal.classList.remove('hidden');
         
-        // Note: 3D effects are intentionally disabled for comparison cards per requirements
+        // Reinitialize 3D effects for comparison cards
+        const comparisonCards = document.querySelectorAll('.cards-comparison .card');
+        comparisonCards.forEach(card => {
+            this.setup3DCardEvents(card);
+        });
     }
 
     displayRevealCard(player, card) {
