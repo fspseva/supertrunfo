@@ -553,9 +553,6 @@ body {
   transition: var(--transition-smooth);
 }
 
-.card-image:hover img {
-  transform: scale(1.05);
-}
 
 /* ===========================
    ATTRIBUTES - FIXED POSITIONING
